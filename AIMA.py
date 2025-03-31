@@ -3,14 +3,14 @@ from views import register_blueprints_main
 from utils import register_blueprints_sub
 from db import init_db
 
-app = Flask(__name__)
+AIMA = Flask(__name__)
 
 # Initialize the database
 init_db()
 
 # Register blueprints
-register_blueprints_main(app)
-register_blueprints_sub(app)
+register_blueprints_main(AIMA)
+register_blueprints_sub(AIMA)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    AIMA.run(host='0.0.0.0', port=5000, debug=True)
