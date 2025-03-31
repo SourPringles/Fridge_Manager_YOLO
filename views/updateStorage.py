@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from db import load_storage, update_storage, delete_storage
-from utils.commons import save_log
-from utils.qr_utils import detect_qr_codes, compare_storages
+from utils import save_log, detect_qr_codes, compare_storages
 from datetime import datetime
 import cv2
 import numpy as np
