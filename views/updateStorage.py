@@ -5,6 +5,8 @@ from datetime import datetime
 import cv2
 import numpy as np
 
+from utils.settings import timeoutValue
+
 updateStorage_bp = Blueprint('updateStorage', __name__)
 
 @updateStorage_bp.route('/updateStorage', methods=['POST'])
@@ -36,16 +38,31 @@ def updateStorage():
         update_temp(qr_text, current_timestamp, value["nickname"])
 
     for qr_text, value in added.items():
+        # QR코드가 현재 storage 안에 없을 때
         if qr_text not in storage:
+            # QR코드가 temp에 있을 때
             if qr_text in temp:
-                new_item = {
-                    "x": value["x"],
-                    "y": value["y"],
-                    "lastModified": current_timestamp,
-                    "nickname": temp[qr_text]["nickname"]
-                }
+                # 해당되는 항목이 반출된 지 2시간 이하일 때
+                if (datetime.now() - datetime.strptime(temp[qr_text]["takeout_time"], "%Y-%m-%d %H:%M:%S")).total_seconds() < timeoutValue:
+                    # temp에 있는 항목을 storage에 업데이트
+                    new_item = {
+                        "x": value["x"],
+                        "y": value["y"],
+                        "lastModified": current_timestamp,
+                        "nickname": temp[qr_text]["nickname"]
+                    }
+                    update_storage(qr_text, new_item)
+                else:
+                    # 현재 반입된 QR코드를 신규로써 삽입
+                    new_item = {
+                        "x": value["x"],
+                        "y": value["y"],
+                        "lastModified": current_timestamp,
+                        "nickname": "New Item!"
+                    }
                 update_storage(qr_text, new_item)
                 delete_temp(qr_text)
+
             else:
                 new_item = {
                     "x": value["x"],

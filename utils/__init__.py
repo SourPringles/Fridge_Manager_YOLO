@@ -3,8 +3,8 @@ from flask import Blueprint
 from .rename import rename_bp
 from .reset import reset_bp
 from .connectionTest import connectionTest_bp
-from .commons import save_log
-from .qr_utils import detect_qr_codes, compare_storages
+from .commons import save_log, compare_storages
+from .qr_utils import detect_qr_codes
 
 # Blueprint 등록
 def register_blueprints_sub(app):

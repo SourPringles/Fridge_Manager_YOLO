@@ -1,0 +1,3 @@
+logValue = 10 # 최대 로그 파일 개수 (default: 10)
+toleranceValue = 5 # 이동으로 간주할 좌표 차이의 기준 (default: 5)
+timeoutValue = 7200 # 반출된 항목이 temp에 남아있는 최대 시간 (default: 2시간)

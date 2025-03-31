@@ -32,6 +32,6 @@ def delete_storage(qr_code):
     """
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM storage WHERE qr_code = ?', (qr_code))
+    cursor.execute('DELETE FROM storage WHERE qr_code = ?', (qr_code,))
     conn.commit()
     conn.close()

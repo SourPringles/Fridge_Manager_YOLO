@@ -1,6 +1,6 @@
 import os
-import json
 from datetime import datetime
+from .settings import logValue, toleranceValue
 
 #def generate_unique_nickname(base_name, inventory):
 #    """
@@ -29,7 +29,7 @@ def save_log(action, **data):
             log_file.write(f"{key.capitalize()}: {value}\n")
 
     # 로그 파일 정리
-    log_amount = 10 # 최대 로그 파일 개수
+    log_amount = logValue # 최대 로그 파일 개수
 
     log_files = sorted(
         [os.path.join(logs_dir, f) for f in os.listdir(logs_dir) if f.endswith('.txt')],
@@ -37,3 +37,29 @@ def save_log(action, **data):
     )
     while len(log_files) > log_amount:
         os.remove(log_files.pop(0))
+
+def compare_storages(prev_data, new_data, tolerance=toleranceValue):
+    """
+    이전 데이터와 비교하여 추가, 삭제, 이동된 항목을 반환하는 함수
+    - tolerance: 이동으로 간주할 좌표 차이의 기준 (default: 5)
+    - prev_data: 이전 데이터 (딕셔너리)
+    - new_data: 새 데이터 (딕셔너리)
+    - 반환값: 추가된 항목, 삭제된 항목, 이동된 항목을 포함하는 튜플
+    """
+    from datetime import datetime
+    added = {key: new_data[key] | {"lastModified": datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for key in new_data if key not in prev_data}
+    removed = {key: prev_data[key] | {"lastModified": datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for key in prev_data if key not in new_data}
+    moved = {
+        key: {
+            "previous": {"x": prev_data[key]["x"], "y": prev_data[key]["y"]},
+            "current": {"x": new_data[key]["x"], "y": new_data[key]["y"]},
+            "lastModified": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "nickname": prev_data[key]["nickname"]
+        }
+        for key in new_data
+        if key in prev_data and (
+            abs(new_data[key]["x"] - prev_data[key]["x"]) > tolerance or
+            abs(new_data[key]["y"] - prev_data[key]["y"]) > tolerance
+        )
+    }
+    return added, removed, moved
