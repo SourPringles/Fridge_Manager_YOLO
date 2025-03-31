@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from db import load_storage, update_storage, delete_storage
+from db import load_storage, update_storage, delete_storage, load_temp, update_temp, delete_temp
 from utils import save_log, detect_qr_codes, compare_storages
 from datetime import datetime
 import cv2
@@ -18,6 +18,7 @@ def upload():
 
     # 이전 데이터 로드
     storage = load_storage()
+    temp = load_temp()
     prev_data = storage.copy()
 
     # QR코드 인식
@@ -32,16 +33,27 @@ def upload():
     # 전체 인벤토리 갱신
     for qr_text, value in removed.items():
         delete_storage(qr_text)
+        update_temp(qr_text, current_timestamp, value["nickname"])
 
     for qr_text, value in added.items():
         if qr_text not in storage:
-            new_item = {
-                "x": value["x"],
-                "y": value["y"],
-                "lastModified": current_timestamp,
-                "nickname": "New Item!"
-            }
-            update_storage(qr_text, new_item)
+            if qr_text in temp:
+                new_item = {
+                    "x": value["x"],
+                    "y": value["y"],
+                    "lastModified": current_timestamp,
+                    "nickname": temp[qr_text]["nickname"]
+                }
+                update_storage(qr_text, new_item)
+                delete_temp(qr_text)
+            else:
+                new_item = {
+                    "x": value["x"],
+                    "y": value["y"],
+                    "lastModified": current_timestamp,
+                    "nickname": "New Item!"
+                }
+                update_storage(qr_text, new_item)
 
     for qr_text, data in moved.items():
         if qr_text in storage:
