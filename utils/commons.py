@@ -17,7 +17,7 @@ def save_log(action, **data):
     """
     로그 저장 함수
     """
-    logs_dir = os.path.join(os.getcwd(), 'Logs')
+    logs_dir = os.path.join(os.getcwd(), 'logs')
     os.makedirs(logs_dir, exist_ok=True)
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     log_file_path = os.path.join(logs_dir, f'{timestamp}.txt')
