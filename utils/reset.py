@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from db import load_storage, delete_storage
+from db import reset_db, load_storage, load_temp
 
 reset_bp = Blueprint('reset', __name__)
 
@@ -8,6 +8,9 @@ def reset_storage():
     """
     DB리셋 엔드포인트 (DEBUG)
     """
-    delete_storage("*")  # Clear all entries in the database
-    inventory = load_storage()
-    return jsonify({"message": "Inventory has been reset.", "inventory": inventory})
+    reset_db()
+
+    storage = load_storage()
+    temp = load_temp()
+
+    return jsonify({"message": "storage has been reset.", "storage": storage, "temp": temp}), 200
