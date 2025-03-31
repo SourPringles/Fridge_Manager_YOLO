@@ -5,6 +5,9 @@ rename_bp = Blueprint('rename', __name__)
 
 @rename_bp.route('/rename/<qr_code>/<new_name>', methods=['POST'])
 def rename(qr_code, new_name):
+    """
+    별명 변경 엔드포인트
+    """
     # SQL 조회로 최신 인벤토리 반환
     inventory = load_storage()
 
