@@ -5,6 +5,9 @@ getStorage_bp = Blueprint('getStorage', __name__)
 
 @getStorage_bp.route('/getStorage', methods=['GET'])
 def get_storage():
+    """
+    재고목록 반환
+    """
     data = load_storage()
 
     storage = {

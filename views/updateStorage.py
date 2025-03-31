@@ -8,7 +8,7 @@ import numpy as np
 updateStorage_bp = Blueprint('updateStorage', __name__)
 
 @updateStorage_bp.route('/updateStorage', methods=['POST'])
-def upload():
+def updateStorage():
     curr_img = request.files.get('source')
 
     if not curr_img:
