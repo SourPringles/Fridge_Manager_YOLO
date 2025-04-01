@@ -10,7 +10,7 @@ call AIMA_env\Scripts\activate.bat
 echo Virtual environment activated
 
 :: 서버 실행
-python app.py
+python AIMA.py
 
 :: 혹시 오류로 종료되었을 때 바로 닫히지 않도록
 pause

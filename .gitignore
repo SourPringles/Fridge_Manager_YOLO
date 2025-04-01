@@ -1,4 +1,4 @@
-/AIMA_env
+/AIMA_env/*
 /logs
 /db/userdata.db
 __pycache__/

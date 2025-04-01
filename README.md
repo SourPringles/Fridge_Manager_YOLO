@@ -5,4 +5,9 @@ Item Manage API With AI(YOLO)
     
     Demo Application : Soon
 
+
+Set Python Environments into AIMA_env Folder 
+
+
+
 Include Github Copilot Generated Code
