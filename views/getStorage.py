@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 from db import load_storage # db로딩함수
+from utils import handle_exception # 에러 핸들링 함수
 
 getStorage_bp = Blueprint('getStorage', __name__)
 
@@ -26,5 +27,8 @@ def get_storage():
     """
     API 엔드포인트
     """
-    storage = get_storage_data()
-    return jsonify(storage)
+    try:
+        storage = get_storage_data()
+        return jsonify(storage)
+    except Exception as e:
+        return handle_exception(e)

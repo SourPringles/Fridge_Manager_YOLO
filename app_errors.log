@@ -1,0 +1,33 @@
+2025-04-02 13:39:51,899 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:39:51,905 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:39:57,006 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\utils\\__init__.py', reloading
+2025-04-02 13:39:57,761 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:39:57,764 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:40:01,837 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\utils\\__init__.py', reloading
+2025-04-02 13:40:02,667 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:40:02,667 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:41:46,967 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\AIMA.py', reloading
+2025-04-02 13:41:47,782 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:41:47,787 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:42:49,553 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\views\\getStorage.py', reloading
+2025-04-02 13:42:50,346 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:42:50,348 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:42:58,468 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\views\\getStorage.py', reloading
+2025-04-02 13:42:59,208 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:42:59,217 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:43:51,833 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\views\\getTemp.py', reloading
+2025-04-02 13:43:52,549 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:43:52,549 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:43:56,626 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\views\\getTemp.py', reloading
+2025-04-02 13:43:57,418 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:43:57,423 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:44:13,638 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\views\\getAll.py', reloading
+2025-04-02 13:44:14,383 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:44:14,393 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:44:16,444 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\views\\getAll.py', reloading
+2025-04-02 13:44:17,198 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:44:17,198 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:44:28,394 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\views\\getAll.py', reloading
+2025-04-02 13:44:29,264 - werkzeug - WARNING -  * Debugger is active!
+2025-04-02 13:44:29,268 - werkzeug - INFO -  * Debugger PIN: 254-248-569
+2025-04-02 13:44:30,285 - werkzeug - INFO -  * Detected change in 'D:\\Projects\\AI_Item_Manage_API\\views\\getStorage.py', reloading
