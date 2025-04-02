@@ -1,5 +1,5 @@
 /AIMA_env/*
-/logs
+/logs/*
 /db/userdata.db
 __pycache__/
 *.py[cod]

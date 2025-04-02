@@ -1,8 +1,11 @@
 from flask import Blueprint
 
+# Blueprints
 from .rename import rename_bp
 from .reset import reset_bp
 from .connectionTest import connectionTest_bp
+
+# Functions
 from .commons import save_log, compare_storages
 from .qr_utils import detect_qr_codes
 

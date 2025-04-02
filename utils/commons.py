@@ -47,13 +47,13 @@ def compare_storages(prev_data, new_data, tolerance=toleranceValue):
     - 반환값: 추가된 항목, 삭제된 항목, 이동된 항목을 포함하는 튜플
     """
     from datetime import datetime
-    added = {key: new_data[key] | {"lastModified": datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for key in new_data if key not in prev_data}
-    removed = {key: prev_data[key] | {"lastModified": datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for key in prev_data if key not in new_data}
+    added = {key: new_data[key] | {"lastChecked": datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for key in new_data if key not in prev_data}
+    removed = {key: prev_data[key] | {"lastChecked": datetime.now().strftime("%Y-%m-%d %H:%M:%S")} for key in prev_data if key not in new_data}
     moved = {
         key: {
             "previous": {"x": prev_data[key]["x"], "y": prev_data[key]["y"]},
             "current": {"x": new_data[key]["x"], "y": new_data[key]["y"]},
-            "lastModified": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "lastChecked": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "nickname": prev_data[key]["nickname"]
         }
         for key in new_data

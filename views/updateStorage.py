@@ -48,7 +48,7 @@ def updateStorage():
                     new_item = {
                         "x": value["x"],
                         "y": value["y"],
-                        "lastModified": current_timestamp,
+                        "lastChecked": current_timestamp,
                         "nickname": temp[qr_text]["nickname"]
                     }
                     update_storage(qr_text, new_item)
@@ -57,7 +57,7 @@ def updateStorage():
                     new_item = {
                         "x": value["x"],
                         "y": value["y"],
-                        "lastModified": current_timestamp,
+                        "lastChecked": current_timestamp,
                         "nickname": "New Item!"
                     }
                 update_storage(qr_text, new_item)
@@ -67,7 +67,7 @@ def updateStorage():
                 new_item = {
                     "x": value["x"],
                     "y": value["y"],
-                    "lastModified": current_timestamp,
+                    "lastChecked": current_timestamp,
                     "nickname": "New Item!"
                 }
                 update_storage(qr_text, new_item)
@@ -77,7 +77,7 @@ def updateStorage():
             updated_item = {
                 "x": data["current"]["x"],
                 "y": data["current"]["y"],
-                "lastModified": current_timestamp,
+                "lastChecked": current_timestamp,
                 "nickname": storage[qr_text]["nickname"]
             }
             update_storage(qr_text, updated_item)
