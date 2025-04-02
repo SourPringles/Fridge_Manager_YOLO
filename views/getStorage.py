@@ -1,8 +1,10 @@
 from flask import Blueprint, jsonify
 from db import load_storage # db로딩함수
+from utils import handle_exception # 에러 핸들링 함수
 
 getStorage_bp = Blueprint('getStorage', __name__)
 
+def get_storage_data():
 def get_storage_data():
     """
     재고목록 반환
@@ -14,6 +16,7 @@ def get_storage_data():
             "nickname": value.get("nickname", "N/A"),
             "x": value["x"],
             "y": value["y"],
+            "lastChecked": value.get("lastChecked", "N/A"),
             "lastChecked": value.get("lastChecked", "N/A"),
             "qr_code": key
         }
