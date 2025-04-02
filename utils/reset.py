@@ -3,7 +3,7 @@ from db import reset_db, load_storage, load_temp
 
 reset_bp = Blueprint('reset', __name__)
 
-@reset_bp.route('/reset', methods=['POST'])
+@reset_bp.route('/reset', methods=['GET'])
 def reset_storage():
     """
     DB리셋 엔드포인트 (DEBUG)

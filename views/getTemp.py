@@ -3,8 +3,7 @@ from db import load_temp # db로딩함수
 
 getTemp_bp = Blueprint('getTemp', __name__)
 
-@getTemp_bp.route('/getTemp', methods=['GET'])
-def get_storage():
+def get_temp_data():
     """
     임시반출목록 반환
     """
@@ -18,4 +17,12 @@ def get_storage():
         }
         for key, value in data.items()
     }
+    return temp
+
+@getTemp_bp.route('/getTemp', methods=['GET'])
+def get_temp():
+    """
+    API 엔드포인트
+    """
+    temp = get_temp_data()
     return jsonify(temp)

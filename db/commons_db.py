@@ -13,7 +13,7 @@ def init_db():
             qr_code TEXT PRIMARY KEY,
             x INTEGER,
             y INTEGER,
-            last_modified TEXT,
+            lastChecked TEXT,
             nickname TEXT
         )
     ''')
@@ -42,7 +42,7 @@ def reset_db():
             qr_code TEXT PRIMARY KEY,
             x INTEGER,
             y INTEGER,
-            last_modified TEXT,
+            lastChecked TEXT,
             nickname TEXT
         )
     ''')

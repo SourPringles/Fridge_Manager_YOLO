@@ -10,7 +10,7 @@ def load_storage():
     cursor.execute('SELECT * FROM storage')
     rows = cursor.fetchall()
     conn.close()
-    storage = {row[0]: {"x": row[1], "y": row[2], "lastModified": row[3], "nickname": row[4]} for row in rows}
+    storage = {row[0]: {"x": row[1], "y": row[2], "lastChecked": row[3], "nickname": row[4]} for row in rows}
     return storage
 
 def update_storage(qr_code, data):
@@ -20,9 +20,9 @@ def update_storage(qr_code, data):
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT OR REPLACE INTO storage (qr_code, x, y, last_modified, nickname)
+        INSERT OR REPLACE INTO storage (qr_code, x, y, lastChecked, nickname)
         VALUES (?, ?, ?, ?, ?)
-    ''', (qr_code, data["x"], data["y"], data["lastModified"], data["nickname"]))
+    ''', (qr_code, data["x"], data["y"], data["lastChecked"], data["nickname"]))
     conn.commit()
     conn.close()
 
