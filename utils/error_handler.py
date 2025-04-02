@@ -5,7 +5,7 @@ import logging
 
 # 로깅 설정
 logging.basicConfig(
-    filename='app_errors.log',
+    filename='AIMA_errors.log',
     level=logging.ERROR,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
