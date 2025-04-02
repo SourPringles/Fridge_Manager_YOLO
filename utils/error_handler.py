@@ -14,6 +14,8 @@ def handle_exception(e):
     """일반적인 예외를 처리하고 적절한 응답을 반환합니다"""
     error_message = str(e)
     error_traceback = traceback.format_exc()
+
+    print(f"Error: {jsonify(error_message)}")
     
     # 에러 로깅
     logging.error(f"Error: {error_message}\nTraceback: {error_traceback}")
