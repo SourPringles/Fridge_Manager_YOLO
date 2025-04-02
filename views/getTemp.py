@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify
 from db import load_temp # db로딩함수
+from utils import handle_exception # 에러 핸들링 함수
 
 getTemp_bp = Blueprint('getTemp', __name__)
 
@@ -24,5 +25,8 @@ def get_temp():
     """
     API 엔드포인트
     """
-    temp = get_temp_data()
-    return jsonify(temp)
+    try:
+        temp = get_temp_data()
+        return jsonify(temp)
+    except Exception as e:
+        return handle_exception(e)
