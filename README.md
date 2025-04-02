@@ -3,7 +3,7 @@
 
 Item Manage API With AI(YOLO)
     
-    [Demo Application](https://github.com/SourPringles/AIMA_Demo)
+[Demo Application](https://github.com/SourPringles/AIMA_Demo)
 
 
 Set Python Environments into AIMA_env Folder 
