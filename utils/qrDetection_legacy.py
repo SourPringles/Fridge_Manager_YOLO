@@ -1,6 +1,6 @@
 from pyzbar.pyzbar import decode
 
-def detect_qr_codes(image):
+def detect_qr_codes_legacy(image):
     """
     QR코드를 인식하고 좌표를 반환하는 함수
     - image: OpenCV 이미지 객체

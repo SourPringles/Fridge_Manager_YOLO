@@ -1,22 +1,42 @@
 from flask import Blueprint, request, jsonify
 from db import load_storage, update_storage, delete_storage, load_temp, update_temp, delete_temp
-from utils import save_log, detect_qr_codes, compare_storages
+from utils import save_log, detect_qr_codes_legacy, compare_storages
 from datetime import datetime
 import cv2
 import numpy as np
 
-from utils.settings import timeoutValue
+from utils.settings import takeoutTimeValue
+
+def create_item(x, y, timestamp, nickname="New Item!"):
+    """
+    인벤토리 아이템 객체를 생성하는 팩토리 함수
+    
+    Args:
+        x: x 좌표
+        y: y 좌표
+        timestamp: 마지막 확인 시간
+        nickname: 아이템 별칭 (기본값: "New Item!")
+        
+    Returns:
+        dict: 인벤토리 아이템 객체
+    """
+    return {
+        "x": x,
+        "y": y,
+        "lastChecked": timestamp,
+        "nickname": nickname
+    }
 
 updateStorage_bp = Blueprint('updateStorage', __name__)
 
 @updateStorage_bp.route('/updateStorage', methods=['POST'])
 def updateStorage():
-    curr_img = request.files.get('source')
+    source = request.files.get('source')
 
-    if not curr_img:
+    if not source:
         return jsonify({"error": "Current image is required."}), 400
 
-    curr_image = cv2.imdecode(np.frombuffer(curr_img.read(), np.uint8), cv2.IMREAD_COLOR)
+    curr_image = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
 
     # 이전 데이터 로드
     storage = load_storage()
@@ -24,7 +44,7 @@ def updateStorage():
     prev_data = storage.copy()
 
     # QR코드 인식
-    new_data = detect_qr_codes(curr_image)
+    new_data = detect_qr_codes_legacy(curr_image)
 
     # 데이터 비교
     added, removed, moved = compare_storages(prev_data, new_data)
@@ -42,8 +62,9 @@ def updateStorage():
         if qr_text not in storage:
             # QR코드가 temp에 있을 때
             if qr_text in temp:
-                # 해당되는 항목이 반출된 지 2시간 이하일 때
-                if (datetime.now() - datetime.strptime(temp[qr_text]["takeout_time"], "%Y-%m-%d %H:%M:%S")).total_seconds() < timeoutValue:
+                print("0")
+                # 해당되는 항목(temp 내의 항목)이 반출된 지 2시간 이하일 때
+                if (datetime.now() - datetime.strptime(temp[qr_text]["takeout_time"], "%Y-%m-%d %H:%M:%S")).total_seconds() < takeoutTimeValue:
                     # temp에 있는 항목을 storage에 업데이트
                     new_item = {
                         "x": value["x"],
@@ -64,6 +85,7 @@ def updateStorage():
                 delete_temp(qr_text)
 
             else:
+                print("1")
                 new_item = {
                     "x": value["x"],
                     "y": value["y"],
