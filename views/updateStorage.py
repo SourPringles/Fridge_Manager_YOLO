@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import load_storage, update_storage, delete_storage, load_temp, update_temp, delete_temp
-from utils import save_log, detect_qr_codes_legacy, compare_storages
+from utils import save_log, compare_storages
+from imageProcesser import detect_qr_codes_pyzbar
 from datetime import datetime
 import cv2
 import numpy as np
@@ -44,7 +45,7 @@ def updateStorage():
     prev_data = storage.copy()
 
     # QR코드 인식
-    new_data = detect_qr_codes_legacy(curr_image)
+    new_data = detect_qr_codes_pyzbar(curr_image)
 
     # 데이터 비교
     added, removed, moved = compare_storages(prev_data, new_data)
