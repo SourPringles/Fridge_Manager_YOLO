@@ -1,32 +1,12 @@
 from flask import Blueprint, request, jsonify
 from db import load_storage, update_storage, delete_storage, load_temp, update_temp, delete_temp
 from utils import save_log, compare_storages
-from imageProcesser import detect_qr_codes_pyzbar
+from imageProcesser import detect_qr_codes_pyzbar, detect_qr_codes_cv2, detect_qr_codes_yolo
 from datetime import datetime
 import cv2
 import numpy as np
 
 from utils.settings import takeoutTimeValue
-
-def create_item(x, y, timestamp, nickname="New Item!"):
-    """
-    인벤토리 아이템 객체를 생성하는 팩토리 함수
-    
-    Args:
-        x: x 좌표
-        y: y 좌표
-        timestamp: 마지막 확인 시간
-        nickname: 아이템 별칭 (기본값: "New Item!")
-        
-    Returns:
-        dict: 인벤토리 아이템 객체
-    """
-    return {
-        "x": x,
-        "y": y,
-        "lastChecked": timestamp,
-        "nickname": nickname
-    }
 
 updateStorage_bp = Blueprint('updateStorage', __name__)
 
@@ -37,7 +17,7 @@ def updateStorage():
     if not source:
         return jsonify({"error": "Current image is required."}), 400
 
-    curr_image = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
+    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
 
     # 이전 데이터 로드
     storage = load_storage()
@@ -45,7 +25,9 @@ def updateStorage():
     prev_data = storage.copy()
 
     # QR코드 인식
-    new_data = detect_qr_codes_pyzbar(curr_image)
+    #new_data = detect_qr_codes_pyzbar(imageSource)
+    #new_data = detect_qr_codes_cv2(imageSource)
+    new_data = detect_qr_codes_yolo(imageSource)
 
     # 데이터 비교
     added, removed, moved = compare_storages(prev_data, new_data)
@@ -86,7 +68,6 @@ def updateStorage():
                 delete_temp(qr_text)
 
             else:
-                print("1")
                 new_item = {
                     "x": value["x"],
                     "y": value["y"],
