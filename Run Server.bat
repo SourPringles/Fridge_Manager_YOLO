@@ -4,7 +4,7 @@ echo Starting AI Item Manager API Server
 echo ===================================
 
 :: 가상환경 활성화
-call AIMA_env\Scripts\activate.bat
+call .venv\Scripts\activate.bat
 
 :: 활성화 확인
 echo Virtual environment activated

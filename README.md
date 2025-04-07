@@ -7,6 +7,6 @@ Working Environments: Python 3.9.13 with Flask
     
 [Demo Application](https://github.com/SourPringles/AIMA_Demo)
 
-Set Python Environments into AIMA_env Folder 
+Set Python Environments into .venv Folder 
 
 Include Github Copilot Generated Code
