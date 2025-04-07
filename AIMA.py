@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask
 from views import register_blueprints_main
 from utils import register_blueprints_sub
 from db import init_db
