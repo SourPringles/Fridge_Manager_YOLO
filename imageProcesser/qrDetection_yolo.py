@@ -44,7 +44,7 @@ def detect_qr_codes_yolo(image, model_path='yolov8n.pt', confidence=0.25):
     return qr_data
 
 # QR 코드 전용 모델을 사용하는 경우 (사전 훈련된 QR 코드 감지 모델이 있을 경우)
-def detect_qr_codes_yolo_custom(image, model_path='qrmodelpath.pt'):
+def detect_qr_codes_yolo_custom(image, model_path='path/to/qr_model.pt'):
     """
     QR코드 전용 YOLO 모델을 사용하여 QR코드를 인식하고 좌표를 반환하는 함수
     - image: OpenCV 이미지 객체
