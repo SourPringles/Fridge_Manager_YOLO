@@ -8,7 +8,6 @@ import numpy as np
 
 from utils.settings import takeoutTimeValue
 
-# 블루프린트 정의
 pyzbar_bp = Blueprint('updateStorage_pyzbar', __name__)
 cv2_bp = Blueprint('updateStorage_cv2', __name__)
 yolo_bp = Blueprint('updateStorage_yolo', __name__)
@@ -51,7 +50,7 @@ def process_update(imageSource, detect_qr_codes):
                         "lastChecked": current_timestamp,
                         "nickname": "New Item!"
                     }
-                update_storage(qr_text, new_item)
+                    update_storage(qr_text, new_item)
                 delete_temp(qr_text)
             else:
                 new_item = {
