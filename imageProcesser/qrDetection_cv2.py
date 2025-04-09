@@ -9,7 +9,7 @@ def detect_qr_codes_cv2(image):
     qr_detector = cv2.QRCodeDetector()
     qr_data = {}
     
-    # 다중 QR 코드 감지 시도 (OpenCV 4.5.1 이상에서 지원)
+    # 다중 QR 코드 감지
     retval, decoded_info, points, _ = qr_detector.detectAndDecodeMulti(image)
     
     if retval:

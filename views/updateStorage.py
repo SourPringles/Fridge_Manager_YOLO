@@ -8,9 +8,14 @@ import numpy as np
 
 from utils.settings import takeoutTimeValue
 
-pyzbar_bp = Blueprint('updateStorage_pyzbar', __name__)
-cv2_bp = Blueprint('updateStorage_cv2', __name__)
-yolo_bp = Blueprint('updateStorage_yolo', __name__)
+updateStorage_bp = Blueprint('updateStorage', __name__)
+
+# QR인식 모드 구분
+mode_functions = {
+    "pyzbar": detect_qr_codes_pyzbar,
+    "cv2": detect_qr_codes_cv2,
+    "yolo": detect_qr_codes_yolo
+}
 
 def process_update(imageSource, detect_qr_codes):
     # 이전 데이터 로드
@@ -80,7 +85,25 @@ def process_update(imageSource, detect_qr_codes):
         "moved": moved,
     }
 
-@pyzbar_bp.route('/updateStorage/pyzbar', methods=['POST'])
+@updateStorage_bp.route('/updateStorage', methods=['POST'])
+def updateStorage():
+    # 요청에서 모드 파라미터 가져오기
+    mode = request.form.get('mode', 'pyzbar')  # 기본값은 pyzbar
+    
+    if mode not in mode_functions:
+        return jsonify({"error": f"지원하지 않는 모드입니다. 사용 가능한 모드: {list(mode_functions.keys())}"}), 400
+    
+    source = request.files.get('source')
+    if not source:
+        return jsonify({"error": "Current image is required."}), 400
+
+    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
+    result = process_update(imageSource, mode_functions[mode])
+    
+    # 응답에 사용된 모드 포함
+    result["mode_used"] = mode
+    return jsonify(result)
+
 def updateStorage_pyzbar():
     source = request.files.get('source')
 
@@ -91,7 +114,6 @@ def updateStorage_pyzbar():
     result = process_update(imageSource, detect_qr_codes_pyzbar)
     return jsonify(result)
 
-@cv2_bp.route('/updateStorage/cv2', methods=['POST'])
 def updateStorage_cv2():
     source = request.files.get('source')
 
@@ -102,7 +124,6 @@ def updateStorage_cv2():
     result = process_update(imageSource, detect_qr_codes_cv2)
     return jsonify(result)
 
-@yolo_bp.route('/updateStorage/yolo', methods=['POST'])
 def updateStorage_yolo():
     source = request.files.get('source')
 
