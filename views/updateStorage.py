@@ -10,24 +10,21 @@ from utils.settings import takeoutTimeValue
 
 updateStorage_bp = Blueprint('updateStorage', __name__)
 
-@updateStorage_bp.route('/updateStorage', methods=['POST'])
-def updateStorage():
-    source = request.files.get('source')
+# QR인식 모드 구분
+mode_functions = {
+    "pyzbar": detect_qr_codes_pyzbar,
+    "cv2": detect_qr_codes_cv2,
+    "yolo": detect_qr_codes_yolo
+}
 
-    if not source:
-        return jsonify({"error": "Current image is required."}), 400
-
-    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
-
+def process_update(imageSource, detect_qr_codes):
     # 이전 데이터 로드
     storage = load_storage()
     temp = load_temp()
     prev_data = storage.copy()
 
     # QR코드 인식
-    #new_data = detect_qr_codes_pyzbar(imageSource)
-    #new_data = detect_qr_codes_cv2(imageSource)
-    new_data = detect_qr_codes_yolo(imageSource)
+    new_data = detect_qr_codes(imageSource)
 
     # 데이터 비교
     added, removed, moved = compare_storages(prev_data, new_data)
@@ -41,14 +38,9 @@ def updateStorage():
         update_temp(qr_text, current_timestamp, value["nickname"])
 
     for qr_text, value in added.items():
-        # QR코드가 현재 storage 안에 없을 때
         if qr_text not in storage:
-            # QR코드가 temp에 있을 때
             if qr_text in temp:
-                print("0")
-                # 해당되는 항목(temp 내의 항목)이 반출된 지 2시간 이하일 때
                 if (datetime.now() - datetime.strptime(temp[qr_text]["takeout_time"], "%Y-%m-%d %H:%M:%S")).total_seconds() < takeoutTimeValue:
-                    # temp에 있는 항목을 storage에 업데이트
                     new_item = {
                         "x": value["x"],
                         "y": value["y"],
@@ -57,16 +49,14 @@ def updateStorage():
                     }
                     update_storage(qr_text, new_item)
                 else:
-                    # 현재 반입된 QR코드를 신규로써 삽입
                     new_item = {
                         "x": value["x"],
                         "y": value["y"],
                         "lastChecked": current_timestamp,
                         "nickname": "New Item!"
                     }
-                update_storage(qr_text, new_item)
+                    update_storage(qr_text, new_item)
                 delete_temp(qr_text)
-
             else:
                 new_item = {
                     "x": value["x"],
@@ -89,8 +79,57 @@ def updateStorage():
     # 로그 저장
     save_log("Upload endpoint called", added=added, removed=removed, moved=moved)
 
-    return jsonify({
+    return {
         "added": added,
         "removed": removed,
         "moved": moved,
-    })
+    }
+
+@updateStorage_bp.route('/updateStorage', methods=['POST'])
+def updateStorage():
+    # 요청에서 모드 파라미터 가져오기
+    mode = request.form.get('mode', 'pyzbar')  # 기본값은 pyzbar
+    
+    if mode not in mode_functions:
+        return jsonify({"error": f"지원하지 않는 모드입니다. 사용 가능한 모드: {list(mode_functions.keys())}"}), 400
+    
+    source = request.files.get('source')
+    if not source:
+        return jsonify({"error": "Current image is required."}), 400
+
+    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
+    result = process_update(imageSource, mode_functions[mode])
+    
+    # 응답에 사용된 모드 포함
+    result["mode_used"] = mode
+    return jsonify(result)
+
+def updateStorage_pyzbar():
+    source = request.files.get('source')
+
+    if not source:
+        return jsonify({"error": "Current image is required."}), 400
+
+    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
+    result = process_update(imageSource, detect_qr_codes_pyzbar)
+    return jsonify(result)
+
+def updateStorage_cv2():
+    source = request.files.get('source')
+
+    if not source:
+        return jsonify({"error": "Current image is required."}), 400
+
+    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
+    result = process_update(imageSource, detect_qr_codes_cv2)
+    return jsonify(result)
+
+def updateStorage_yolo():
+    source = request.files.get('source')
+
+    if not source:
+        return jsonify({"error": "Current image is required."}), 400
+
+    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
+    result = process_update(imageSource, detect_qr_codes_yolo)
+    return jsonify(result)
