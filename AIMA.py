@@ -1,9 +1,14 @@
-from flask import Flask
+from flask import Flask, render_template
 from views import register_blueprints_main
 from utils import register_blueprints_sub
 from db import init_db
 
 AIMA = Flask(__name__)
+
+# API Specification
+@AIMA.route('/')
+def index():
+    return render_template('apispec.html')
 
 # Initialize the database
 init_db()
