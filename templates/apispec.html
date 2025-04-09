@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .endpoint-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .endpoint-item {
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .endpoint-title {
+            display: flex;
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+        .endpoint-title:hover {
+            background-color: #e9e9e9;
+        }
+        .method {
+            display: inline-block;
+            padding: 2px 6px;
+            margin-right: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .get {
+            background-color: #61affe;
+            color: white;
+        }
+        .post {
+            background-color: #49cc90;
+            color: white;
+        }
+        .endpoint-details {
+            display: none;
+            padding: 15px;
+            border-top: 1px solid #ddd;
+        }
+        .show {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .code {
+            background-color: #f8f8f8;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+        }
+        .json-key {
+            color: #881391;
+        }
+        .json-string {
+            color: #108020;
+        }
+        .json-number {
+            color: #1a01cc;
+        }
+        .json-boolean {
+            color: #1a01cc;
+        }
+        .json-null {
+            color: #1a01cc;
+        }
+        .json-comment {
+            color: #888888;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Item Management API Documentation</h1>
+    
+    <ul class="endpoint-list">
+        <!-- Connection Test -->
+        <li class="endpoint-item">
+            <div class="endpoint-title" onclick="toggleDetails('connectionTest')">
+                <span class="method get">GET</span>
+                <span>/connectionTest</span>
+            </div>
+            <div id="connectionTest" class="endpoint-details">
+                <h3>연결 테스트</h3>
+                <p><strong>Description:</strong> API 서버와의 연결이 정상적인지 확인합니다.</p>
+                <h4>Response</h4>
+                <div class="code">Connection Successful</div>
+                <h4>Example</h4>
+                <div class="code">// 요청
+GET /connectionTest HTTP/1.1
+Host: example.com
+
+// 응답
+HTTP/1.1 200 OK
+Content-Type: text/plain
+
+Connection Successful</div>
+            </div>
+        </li>
+
+        <!-- Get Temporary Items -->
+        <li class="endpoint-item">
+            <div class="endpoint-title" onclick="toggleDetails('getTemp')">
+                <span class="method get">GET</span>
+                <span>/getTemp</span>
+            </div>
+            <div id="getTemp" class="endpoint-details">
+                <h3>임시반출목록 반환</h3>
+                <p><strong>Description:</strong> 현재 임시반출 상태인 아이템 목록을 반환합니다.</p>
+                <h4>Response</h4>
+                <div class="code"><span class="json-key">{</span>
+  <span class="json-key">"qr_code1"</span>: <span class="json-key">{</span>
+    <span class="json-key">"nickname"</span>: <span class="json-string">"아이템명"</span>,
+    <span class="json-key">"takeout_time"</span>: <span class="json-string">"2023-01-01 12:00:00"</span>,
+    <span class="json-key">"qr_code"</span>: <span class="json-string">"qr_code1"</span>
+  <span class="json-key">}</span>,
+  <span class="json-key">"qr_code2"</span>: <span class="json-key">{</span>
+    <span class="json-comment">// 다른 임시반출 아이템 정보</span>
+  <span class="json-key">}</span>
+<span class="json-key">}</span></div>
+                <h4>Example</h4>
+                <div class="code">// 요청
+GET /getTemp HTTP/1.1
+Host: example.com
+
+// 응답
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "QR12345": {
+    "nickname": "노트북",
+    "takeout_time": "2023-11-05 14:30:45",
+    "qr_code": "QR12345"
+  },
+  "QR67890": {
+    "nickname": "태블릿",
+    "takeout_time": "2023-11-05 16:15:22",
+    "qr_code": "QR67890"
+  }
+}</div>
+            </div>
+        </li>
+
+        <!-- Get Storage Items -->
+        <li class="endpoint-item">
+            <div class="endpoint-title" onclick="toggleDetails('getStorage')">
+                <span class="method get">GET</span>
+                <span>/getStorage</span>
+            </div>
+            <div id="getStorage" class="endpoint-details">
+                <h3>재고목록 반환</h3>
+                <p><strong>Description:</strong> 현재 보관 중인 모든 아이템 목록을 반환합니다.</p>
+                <h4>Response</h4>
+                <div class="code"><span class="json-key">{</span>
+  <span class="json-key">"qr_code1"</span>: <span class="json-key">{</span>
+    <span class="json-key">"nickname"</span>: <span class="json-string">"아이템명"</span>,
+    <span class="json-key">"x"</span>: <span class="json-number">100</span>,
+    <span class="json-key">"y"</span>: <span class="json-number">200</span>,
+    <span class="json-key">"lastChecked"</span>: <span class="json-string">"2023-01-01 12:00:00"</span>,
+    <span class="json-key">"qr_code"</span>: <span class="json-string">"qr_code1"</span>
+  <span class="json-key">}</span>,
+  <span class="json-key">"qr_code2"</span>: <span class="json-key">{</span>
+    <span class="json-comment">// 다른 보관 아이템 정보</span>
+  <span class="json-key">}</span>
+<span class="json-key">}</span></div>
+                <h4>Example</h4>
+                <div class="code">// 요청
+GET /getStorage HTTP/1.1
+Host: example.com
+
+// 응답
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "QR12345": {
+    "nickname": "모니터",
+    "x": 120,
+    "y": 200,
+    "lastChecked": "2023-11-05 09:30:00",
+    "qr_code": "QR12345"
+  },
+  "QR67890": {
+    "nickname": "키보드",
+    "x": 150,
+    "y": 220,
+    "lastChecked": "2023-11-05 09:30:00",
+    "qr_code": "QR67890"
+  }
+}</div>
+            </div>
+        </li>
+
+        <!-- Get All -->
+        <li class="endpoint-item">
+            <div class="endpoint-title" onclick="toggleDetails('getAll')">
+                <span class="method get">GET</span>
+                <span>/getAll</span>
+            </div>
+            <div id="getAll" class="endpoint-details">
+                <h3>전체 데이터 반환</h3>
+                <p><strong>Description:</strong> 재고목록과 임시반출목록 모두 반환합니다.</p>
+                <h4>Response</h4>
+                <div class="code"><span class="json-key">{</span>
+  <span class="json-key">"storage"</span>: <span class="json-key">{</span>
+    <span class="json-comment">// 재고 목록 객체</span>
+  <span class="json-key">}</span>,
+  <span class="json-key">"temp"</span>: <span class="json-key">{</span>
+    <span class="json-comment">// 임시반출 목록 객체</span>
+  <span class="json-key">}</span>
+<span class="json-key">}</span></div>
+                <h4>Example</h4>
+                <div class="code">// 요청
+GET /getAll HTTP/1.1
+Host: example.com
+
+// 응답
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "storage": {
+    "QR12345": {
+      "nickname": "모니터",
+      "x": 120,
+      "y": 200,
+      "lastChecked": "2023-11-05 09:30:00",
+      "qr_code": "QR12345"
+    }
+  },
+  "temp": {
+    "QR67890": {
+      "nickname": "노트북",
+      "takeout_time": "2023-11-05 14:30:45",
+      "qr_code": "QR67890"
+    }
+  }
+}</div>
+            </div>
+        </li>
+
+        <!-- Reset Database -->
+        <li class="endpoint-item">
+            <div class="endpoint-title" onclick="toggleDetails('reset')">
+                <span class="method get">GET</span>
+                <span>/reset</span>
+            </div>
+            <div id="reset" class="endpoint-details">
+                <h3>DB 리셋 (디버그용)</h3>
+                <p><strong>Description:</strong> 데이터베이스를 초기화합니다. 디버그 용도로만 사용해야 합니다.</p>
+                <h4>Response</h4>
+                <div class="code"><span class="json-key">{</span>
+  <span class="json-key">"message"</span>: <span class="json-string">"storage has been reset."</span>,
+  <span class="json-key">"storage"</span>: <span class="json-key">{}</span>,
+  <span class="json-key">"temp"</span>: <span class="json-key">{}</span>
+<span class="json-key">}</span></div>
+                <h4>Example</h4>
+                <div class="code">// 요청
+GET /reset HTTP/1.1
+Host: example.com
+
+// 응답
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "storage has been reset.",
+  "storage": {},
+  "temp": {}
+}</div>
+            </div>
+        </li>
+        
+        <!-- Update Storage -->
+        <li class="endpoint-item">
+            <div class="endpoint-title" onclick="toggleDetails('updateStorage')">
+                <span class="method post">POST</span>
+                <span>/updateStorage</span>
+            </div>
+            <div id="updateStorage" class="endpoint-details">
+                <h3>재고 이미지 인식 및 업데이트</h3>
+                <p><strong>Description:</strong> 이미지에서 QR 코드를 감지하여 재고 상태를 업데이트합니다.</p>
+                
+                <h4>Request</h4>
+                <table>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>mode</td>
+                        <td>string</td>
+                        <td>No (기본값: pyzbar)</td>
+                        <td>QR 인식 모드 (pyzbar, cv2, yolo)</td>
+                    </tr>
+                    <tr>
+                        <td>source</td>
+                        <td>file</td>
+                        <td>Yes</td>
+                        <td>QR 코드가 포함된 이미지 파일</td>
+                    </tr>
+                </table>
+                
+                <h4>Response</h4>
+                <div class="code"><span class="json-key">{</span>
+  <span class="json-key">"added"</span>: <span class="json-key">{</span>
+    <span class="json-comment">// 새로 추가된 아이템 정보</span>
+  <span class="json-key">}</span>,
+  <span class="json-key">"removed"</span>: <span class="json-key">{</span>
+    <span class="json-comment">// 제거된 아이템 정보</span>
+  <span class="json-key">}</span>,
+  <span class="json-key">"moved"</span>: <span class="json-key">{</span>
+    <span class="json-comment">// 위치가 변경된 아이템 정보</span>
+  <span class="json-key">}</span>,
+  <span class="json-key">"mode_used"</span>: <span class="json-string">"pyzbar"</span>
+<span class="json-key">}</span></div>
+                <h4>Example</h4>
+                <div class="code">// 요청
+POST /updateStorage HTTP/1.1
+Host: example.com
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="mode"
+
+pyzbar
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="source"; filename="image.jpg"
+Content-Type: image/jpeg
+
+[이미지 데이터]
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+// 응답
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "added": {
+    "QR12345": {
+      "nickname": "새 모니터",
+      "x": 150,
+      "y": 250,
+      "lastChecked": "2023-11-05 13:45:22",
+      "qr_code": "QR12345"
+    }
+  },
+  "removed": {},
+  "moved": {
+    "QR67890": {
+      "old": {"x": 120, "y": 200},
+      "new": {"x": 130, "y": 210}
+    }
+  },
+  "mode_used": "pyzbar"
+}</div>
+            </div>
+        </li>
+
+        <!-- Rename Item -->
+        <li class="endpoint-item">
+            <div class="endpoint-title" onclick="toggleDetails('rename')">
+                <span class="method post">POST</span>
+                <span>/rename/&lt;qr_code&gt;/&lt;new_name&gt;</span>
+            </div>
+            <div id="rename" class="endpoint-details">
+                <h3>아이템 별명 변경</h3>
+                <p><strong>Description:</strong> QR 코드로 식별된 아이템의 별명을 변경합니다.</p>
+                
+                <h4>Path Parameters</h4>
+                <table>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Required</th>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td>qr_code</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>변경할 아이템의 QR 코드</td>
+                    </tr>
+                    <tr>
+                        <td>new_name</td>
+                        <td>string</td>
+                        <td>Yes</td>
+                        <td>설정할 새 별명</td>
+                    </tr>
+                </table>
+                
+                <h4>Response</h4>
+                <div class="code"><span class="json-key">{</span>
+  <span class="json-key">"message"</span>: <span class="json-string">"Nickname updated successfully."</span>,
+  <span class="json-key">"inventory"</span>: <span class="json-key">{</span>
+    <span class="json-comment">// 업데이트된 전체 인벤토리</span>
+  <span class="json-key">}</span>
+<span class="json-key">}</span></div>
+                <h4>Example</h4>
+                <div class="code">// 요청
+POST /rename/QR12345/새노트북 HTTP/1.1
+Host: example.com
+
+// 응답
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "message": "Nickname updated successfully.",
+  "inventory": {
+    "storage": {
+      "QR12345": {
+        "nickname": "새노트북",
+        "x": 120,
+        "y": 200,
+        "lastChecked": "2023-11-05 09:30:00",
+        "qr_code": "QR12345"
+      }
+    },
+    "temp": {}
+  }
+}</div>
+            </div>
+        </li>
+    </ul>
+
+    <script>
+        function toggleDetails(id) {
+            const element = document.getElementById(id);
+            element.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>
