@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import load_storage, update_storage, delete_storage, load_temp, update_temp, delete_temp
 from utils import save_log, compare_storages
-from modules import detect_qr_codes_pyzbar, detect_qr_codes_cv2, detect_qr_codes_yolo
+from modules import detect_qr_codes_pyzbar, detect_objects_yolo
 from datetime import datetime
 import cv2
 import numpy as np
@@ -13,8 +13,8 @@ updateStorage_bp = Blueprint('updateStorage', __name__)
 # QR인식 모드 구분
 mode_functions = {
     "pyzbar": detect_qr_codes_pyzbar,
-    "cv2": detect_qr_codes_cv2,
-    "yolo": detect_qr_codes_yolo
+    #"cv2": detect_qr_codes_cv2,
+    "yolo": detect_objects_yolo
 }
 
 def process_update(imageSource, detect_qr_codes):
@@ -114,15 +114,15 @@ def updateStorage_pyzbar():
     result = process_update(imageSource, detect_qr_codes_pyzbar)
     return jsonify(result)
 
-def updateStorage_cv2():
-    source = request.files.get('source')
+#def updateStorage_cv2():
+#    source = request.files.get('source')
+#
+#    if not source:
+#        return jsonify({"error": "Current image is required."}), 400
 
-    if not source:
-        return jsonify({"error": "Current image is required."}), 400
-
-    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
-    result = process_update(imageSource, detect_qr_codes_cv2)
-    return jsonify(result)
+#    imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
+#    result = process_update(imageSource, detect_qr_codes_cv2)
+#    return jsonify(result)
 
 def updateStorage_yolo():
     source = request.files.get('source')
@@ -131,5 +131,5 @@ def updateStorage_yolo():
         return jsonify({"error": "Current image is required."}), 400
 
     imageSource = cv2.imdecode(np.frombuffer(source.read(), np.uint8), cv2.IMREAD_COLOR)
-    result = process_update(imageSource, detect_qr_codes_yolo)
+    result = process_update(imageSource, detect_objects_yolo)
     return jsonify(result)
