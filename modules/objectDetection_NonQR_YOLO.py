@@ -1,9 +1,9 @@
 from ultralytics import YOLO
 from pyzbar.pyzbar import decode
 
-def detect_qr_codes_yolo(image, model_path='yolov8n.pt', confidence=0.25):
+def detect_objects_yolo(image, model_path='yolov8n.pt', confidence=0.25):
     """
-    QR코드를 인식하고 좌표를 반환하는 함수 (YOLO 사용)
+    물체를 인식하고 좌표를 반환하는 함수 (YOLO 사용)
     - image: OpenCV 이미지 객체
     - model_path: YOLO 모델 경로 (기본값: yolov8n.pt)
     - confidence: 감지 신뢰도 임계값
