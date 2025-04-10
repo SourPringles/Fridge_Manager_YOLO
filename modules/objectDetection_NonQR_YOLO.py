@@ -26,10 +26,10 @@ def detect_objects_yolo(image, model_path='yolov8n.pt', confidence=0.25):
         object_info = {
             "id": i,
             "nickname": "NEW ITEM",
-            "class": class_name,
-            "confidence": confidence,
+            "class": class_name,    # 모델 학습 후 제거
+            "confidence": confidence,   # 모델 학습 후 제거
             "coordinates": {"x": (x1 + x2) / 2, "y": (y1 + y2) / 2},
-            "features": extract_features(image, (x1, y1, x2, y2))  # 물체의 특징을 추출하는 함수
+            "features": extract_features(image, (x1, y1, x2, y2))   # 물체의 특징을 추출하는 함수
         }
         objects.append(object_info)
 

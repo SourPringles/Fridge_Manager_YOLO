@@ -15,7 +15,6 @@ def get_storage_data():
             "x": value["x"],
             "y": value["y"],
             "lastChecked": value.get("lastChecked", "N/A"),
-            "lastChecked": value.get("lastChecked", "N/A"),
             "qr_code": key
         }
         for key, value in data.items()
