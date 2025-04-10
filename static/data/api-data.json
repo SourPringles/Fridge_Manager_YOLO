@@ -1,0 +1,151 @@
+{
+    "endpoints": [
+        {
+            "id": "connectionTest",
+            "method": "GET",
+            "path": "/connectionTest",
+            "title": "연결 테스트",
+            "description": "API 서버와의 연결이 정상적인지 확인합니다.",
+            "request": null,
+            "response": "Connection Successful",
+            "example": {
+                "request": "GET /connectionTest HTTP/1.1\nHost: example.com",
+                "response": "HTTP/1.1 200 OK\nContent-Type: text/plain\n\nConnection Successful"
+            }
+        },
+        {
+            "id": "getTemp",
+            "method": "GET",
+            "path": "/getTemp",
+            "title": "임시반출목록 반환",
+            "description": "현재 임시반출 상태인 아이템 목록을 반환합니다.",
+            "response": {
+                "qr_code1": {
+                    "nickname": "아이템명",
+                    "takeout_time": "2023-01-01 12:00:00",
+                    "qr_code": "qr_code1"
+                },
+                "qr_code2": "// 다른 임시반출 아이템 정보"
+            },
+            "example": {
+                "request": "GET /getTemp HTTP/1.1\nHost: example.com",
+                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"QR12345\": {\n    \"nickname\": \"노트북\",\n    \"takeout_time\": \"2023-11-05 14:30:45\",\n    \"qr_code\": \"QR12345\"\n  },\n  \"QR67890\": {\n    \"nickname\": \"태블릿\",\n    \"takeout_time\": \"2023-11-05 16:15:22\",\n    \"qr_code\": \"QR67890\"\n  }\n}"
+            }
+        },
+        {
+            "id": "getStorage",
+            "method": "GET",
+            "path": "/getStorage",
+            "title": "재고목록 반환",
+            "description": "현재 보관 중인 모든 아이템 목록을 반환합니다.",
+            "response": {
+                "qr_code1": {
+                    "nickname": "아이템명",
+                    "x": 100,
+                    "y": 200,
+                    "lastChecked": "2023-01-01 12:00:00",
+                    "qr_code": "qr_code1"
+                },
+                "qr_code2": "// 다른 보관 아이템 정보"
+            },
+            "example": {
+                "request": "GET /getStorage HTTP/1.1\nHost: example.com",
+                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"QR12345\": {\n    \"nickname\": \"모니터\",\n    \"x\": 120,\n    \"y\": 200,\n    \"lastChecked\": \"2023-11-05 09:30:00\",\n    \"qr_code\": \"QR12345\"\n  },\n  \"QR67890\": {\n    \"nickname\": \"키보드\",\n    \"x\": 150,\n    \"y\": 220,\n    \"lastChecked\": \"2023-11-05 09:30:00\",\n    \"qr_code\": \"QR67890\"\n  }\n}"
+            }
+        },
+        {
+            "id": "getAll",
+            "method": "GET",
+            "path": "/getAll",
+            "title": "전체 데이터 반환",
+            "description": "재고목록과 임시반출목록 모두 반환합니다.",
+            "response": {
+                "storage": "// 재고 목록 객체",
+                "temp": "// 임시반출 목록 객체"
+            },
+            "example": {
+                "request": "GET /getAll HTTP/1.1\nHost: example.com",
+                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"storage\": {\n    \"QR12345\": {\n      \"nickname\": \"모니터\",\n      \"x\": 120,\n      \"y\": 200,\n      \"lastChecked\": \"2023-11-05 09:30:00\",\n      \"qr_code\": \"QR12345\"\n    }\n  },\n  \"temp\": {\n    \"QR67890\": {\n      \"nickname\": \"노트북\",\n      \"takeout_time\": \"2023-11-05 14:30:45\",\n      \"qr_code\": \"QR67890\"\n    }\n  }\n}"
+            }
+        },
+        {
+            "id": "reset",
+            "method": "GET",
+            "path": "/reset",
+            "title": "DB 리셋 (디버그용)",
+            "description": "데이터베이스를 초기화합니다. 디버그 용도로만 사용해야 합니다.",
+            "response": {
+                "message": "storage has been reset.",
+                "storage": {},
+                "temp": {}
+            },
+            "example": {
+                "request": "GET /reset HTTP/1.1\nHost: example.com",
+                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"message\": \"storage has been reset.\",\n  \"storage\": {},\n  \"temp\": {}\n}"
+            }
+        },
+        {
+            "id": "updateStorage",
+            "method": "POST",
+            "path": "/updateStorage",
+            "title": "재고 이미지 인식 및 업데이트",
+            "description": "이미지에서 QR 코드를 감지하여 재고 상태를 업데이트합니다.",
+            "request": [
+                {
+                    "name": "mode",
+                    "type": "string",
+                    "required": false,
+                    "default": "pyzbar",
+                    "description": "QR 인식 모드 (pyzbar, cv2, yolo)"
+                },
+                {
+                    "name": "source",
+                    "type": "file",
+                    "required": true,
+                    "description": "QR 코드가 포함된 이미지 파일"
+                }
+            ],
+            "response": {
+                "added": "// 새로 추가된 아이템 정보",
+                "removed": "// 제거된 아이템 정보",
+                "moved": "// 위치가 변경된 아이템 정보",
+                "mode_used": "pyzbar"
+            },
+            "example": {
+                "request": "POST /updateStorage HTTP/1.1\nHost: example.com\nContent-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW\n\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"mode\"\n\npyzbar\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"source\"; filename=\"image.jpg\"\nContent-Type: image/jpeg\n\n[이미지 데이터]\n------WebKitFormBoundary7MA4YWxkTrZu0gW--",
+                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"added\": {\n    \"QR12345\": {\n      \"nickname\": \"새 모니터\",\n      \"x\": 150,\n      \"y\": 250,\n      \"lastChecked\": \"2023-11-05 13:45:22\",\n      \"qr_code\": \"QR12345\"\n    }\n  },\n  \"removed\": {},\n  \"moved\": {\n    \"QR67890\": {\n      \"old\": {\"x\": 120, \"y\": 200},\n      \"new\": {\"x\": 130, \"y\": 210}\n    }\n  },\n  \"mode_used\": \"pyzbar\"\n}"
+            }
+        },
+        {
+            "id": "rename",
+            "method": "POST",
+            "path": "/rename/<qr_code>/<new_name>",
+            "title": "아이템 별명 변경",
+            "description": "QR 코드로 식별된 아이템의 별명을 변경합니다.",
+            "request": [
+                {
+                    "name": "qr_code",
+                    "type": "string",
+                    "required": true,
+                    "path": true,
+                    "description": "변경할 아이템의 QR 코드"
+                },
+                {
+                    "name": "new_name",
+                    "type": "string",
+                    "required": true,
+                    "path": true,
+                    "description": "설정할 새 별명"
+                }
+            ],
+            "response": {
+                "message": "Nickname updated successfully.",
+                "inventory": "// 업데이트된 전체 인벤토리"
+            },
+            "example": {
+                "request": "POST /rename/QR12345/새노트북 HTTP/1.1\nHost: example.com",
+                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"message\": \"Nickname updated successfully.\",\n  \"inventory\": {\n    \"storage\": {\n      \"QR12345\": {\n        \"nickname\": \"새노트북\",\n        \"x\": 120,\n        \"y\": 200,\n        \"lastChecked\": \"2023-11-05 09:30:00\",\n        \"qr_code\": \"QR12345\"\n      }\n    },\n    \"temp\": {}\n  }\n}"
+            }
+        }
+    ]
+}
