@@ -25,6 +25,7 @@ def detect_objects_yolo(image, model_path='yolov8n.pt', confidence=0.25):
 
         object_info = {
             "id": i,
+            "nickname": "NEW ITEM",
             "class": class_name,
             "confidence": confidence,
             "coordinates": {"x": (x1 + x2) / 2, "y": (y1 + y2) / 2},
