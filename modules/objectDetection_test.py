@@ -34,7 +34,7 @@ import os
 current_directory = os.getcwd()
 print(f"현재 작업 디렉토리: {current_directory}")
 
-data = load_image_from_path('./test/NonQRtest/1_original.jpg')
+data = load_image_from_path('./test/NonQRtest/4_original.jpg')
 
 img1 = data[0]['image']
 img2 = data[1]['image']

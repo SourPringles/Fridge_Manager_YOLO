@@ -18,6 +18,7 @@ def detect_objects_yolo(image, model_path='AIMA_model.pt'):
     model = YOLO(model_path)
     
     results = model(image)
+    plotted_image = results[0].plot()
 
     objects = []
     for i, det in enumerate(results[0].boxes):
@@ -45,7 +46,10 @@ def detect_objects_yolo(image, model_path='AIMA_model.pt'):
         objects.append(object_info)
 
         # debug
-        thumbnail.save(f"./test/output/{i}output.jpg")
-        print(f"Object {i}: {object_info['nickname']}, Coordinates: {object_info['coordinates']}")
+        thumbnail.save(f"./test/output/{i+1}output.jpg")
+        print(f"Object {i+1}: {object_info['nickname']}, Coordinates: {object_info['coordinates']}")
+
+    # debug 
+    cv2.imwrite("./test/output/0output.jpg", plotted_image)
 
     return objects
