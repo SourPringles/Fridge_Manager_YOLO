@@ -1,5 +1,6 @@
 import cv2
 import objectDetection_NonQR_YOLO
+from NonQR_modules import compare_images
 
 def load_image_from_path(image_path):
     """
@@ -18,7 +19,7 @@ def load_image_from_path(image_path):
         if image is None:
             raise ValueError(f"이미지를 로드할 수 없습니다: {image_path}")
         
-        testresult = objectDetection_NonQR_YOLO.extract_features(image, (0, 0, 224, 224))
+        testresult = objectDetection_NonQR_YOLO.detect_objects_yolo(image)
         print(testresult)
             
         return testresult
@@ -26,4 +27,17 @@ def load_image_from_path(image_path):
         print(f"이미지 로드 중 오류 발생: {e}")
         return None
     
-load_image_from_path('D:/1234.jpg')
+# TEST
+
+import os
+
+current_directory = os.getcwd()
+print(f"현재 작업 디렉토리: {current_directory}")
+
+data = load_image_from_path('./test/NonQRtest/1_original.jpg')
+
+img1 = data[0]['image']
+img2 = data[1]['image']
+
+score = compare_images(img1, img2)
+print(f"두 이미지의 유사도: {score:.4f}")

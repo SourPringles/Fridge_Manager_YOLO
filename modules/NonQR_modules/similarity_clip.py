@@ -67,11 +67,3 @@ def compare_images(image1: Union[str, Image.Image],
     
     # 유사도 계산 및 반환
     return compute_similarity(features1, features2)
-
-# test area
-
-#img1 = Image.open("C:/Users/home/Desktop/asdasdsa/asdf/4.jpg").convert("RGB")
-#img2 = Image.open("C:/Users/home/Desktop/asdasdsa/asdf/2.jpg").convert("RGB")
-#
-#score = compare_images(img1, img2)
-#print(f"두 이미지의 유사도: {score:.4f}")
