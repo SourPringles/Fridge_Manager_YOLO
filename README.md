@@ -5,7 +5,7 @@
 
 Working Environments: Python 3.9.13 with Flask
 
-YOLOv8 Custom Model Project: [Roboflow Link](https://universe.roboflow.com/test-rphja/plastic_container-uei4i-ruegd)
+YOLOv8 Custom Model Project: [Roboflow Link](https://universe.roboflow.com/test-rphja/aima_model)
     
 Demo Application: [Github](https://github.com/SourPringles/AIMA_Demo)
 
