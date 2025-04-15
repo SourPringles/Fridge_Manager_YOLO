@@ -12,7 +12,7 @@ model, preprocess = clip.load("ViT-B/32", device=device)
 
 def extract_features_clip(image) -> np.ndarray:
     """
-    CLIP 모델을 사용하여 이미지에서 특징을 추출합니다.
+    CLIP 모델을 사용하여 이미지에서 특징 추출
     
     Args:
         image: PIL Image 객체
@@ -35,7 +35,7 @@ def extract_features_clip(image) -> np.ndarray:
 
 def compute_similarity(features1: np.ndarray, features2: np.ndarray) -> float:
     """
-    두 특징 벡터 간의 코사인 유사도를 계산합니다.
+    두 특징 벡터 간의 코사인 유사도를 계산
     
     Args:
         features1: 첫 번째 이미지의 특징 벡터
@@ -49,7 +49,7 @@ def compute_similarity(features1: np.ndarray, features2: np.ndarray) -> float:
 def compare_images(image1: Union[str, Image.Image], 
                   image2: Union[str, Image.Image]) -> float:
     """
-    두 이미지의 유사도를 CLIP 모델을 사용하여 비교합니다.
+    두 이미지의 유사도를 CLIP 모델을 사용하여 비교
     
     Args:
         image1: 첫 번째 이미지 경로 또는 PIL Image 객체

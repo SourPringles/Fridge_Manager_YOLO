@@ -8,8 +8,8 @@ from .updateStorage import updateStorage_bp
 from .updateStorageV2 import updateStorageV2_bp
 
 # Functions
-from .getStorage import get_storage_data
-from .getTemp import get_temp_data
+#from .getStorage import get_storage_data
+#from .getTemp import get_temp_data
 
 # Blueprint 등록
 def register_blueprints_main(app):

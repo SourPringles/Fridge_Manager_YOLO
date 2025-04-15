@@ -5,3 +5,4 @@ __pycache__/
 *$py.class
 DoNotUpload/
 /test/output/*
+/db/imgs/*

@@ -1,26 +1,28 @@
 import sqlite3
 
 DB_FILE = "./db/userdata.db"
+conn = sqlite3.connect(DB_FILE)
+cursor = conn.cursor()
 
 def init_db():
     """
-    데이터베이스 초기화: storage 테이블 생성, temp 테이블 생성
+    데이터베이스 초기화: storageV2 테이블 생성, tempV2 테이블 생성
     """
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS storage (
-            qr_code TEXT PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS storageV2 (
+            id INTEGER PRIMARY KEY autoincrement,
+            image TEXT,
             x INTEGER,
             y INTEGER,
-            lastChecked TEXT,
+            timestamp TEXT,
             nickname TEXT
         )
     ''')
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS temp (
-            qr_code TEXT PRIMARY KEY,
-            takeout_time TEXT,
+        CREATE TABLE IF NOT EXISTS tempV2 (
+            id INTEGER PRIMARY KEY autoincrement,
+            image TEXT,
+            timestamp TEXT,
             nickname TEXT
         )
     ''')
@@ -34,22 +36,24 @@ def reset_db():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
 
-    cursor.execute('DROP TABLE IF EXISTS storage')
-    cursor.execute('DROP TABLE IF EXISTS temp')
+    cursor.execute('DROP TABLE IF EXISTS storageV2')
+    cursor.execute('DROP TABLE IF EXISTS tempV2')
 
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS storage (
-            qr_code TEXT PRIMARY KEY,
+        CREATE TABLE IF NOT EXISTS storageV2 (
+            id INTEGER PRIMARY KEY autoincrement,
+            image TEXT,
             x INTEGER,
             y INTEGER,
-            lastChecked TEXT,
+            timestamp TEXT,
             nickname TEXT
         )
     ''')
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS temp (
-            qr_code TEXT PRIMARY KEY,
-            takeout_time TEXT,
+        CREATE TABLE IF NOT EXISTS tempV2 (
+            id INTEGER PRIMARY KEY autoincrement,
+            image TEXT,
+            timestamp TEXT,
             nickname TEXT
         )
     ''')

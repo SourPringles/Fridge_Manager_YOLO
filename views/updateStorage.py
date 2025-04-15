@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from db import load_storage, update_storage, delete_storage, load_temp, update_temp, delete_temp
 from utils import save_log, compare_storages
-from modules import detect_qr_codes_pyzbar
+from modules.QR_modules import detect_qr_codes_pyzbar
 from datetime import datetime
 import cv2
 import numpy as np

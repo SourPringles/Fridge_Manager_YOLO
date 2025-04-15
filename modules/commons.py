@@ -7,7 +7,6 @@ def convert_cv2_to_pil(image):
 
     return pil_image
 
-
 # bbox = [x_min, y_min, x_max, y_max]
 def crop_object(image, bbox):
     """
