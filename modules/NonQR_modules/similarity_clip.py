@@ -67,3 +67,43 @@ def compare_images(image1: Union[str, Image.Image],
     
     # 유사도 계산 및 반환
     return compute_similarity(features1, features2)
+
+def find_most_similar_image(query_image: Union[str, Image.Image], 
+                           image_list: List[Union[str, Image.Image]], 
+                           bbox: Tuple[int, int, int, int] = None,
+                           threshold: float = 0.75) -> Tuple[int, float, List[float]]:
+    """
+    쿼리 이미지와 가장 유사한 이미지를 목록에서 찾습니다.
+    
+    Args:
+        query_image: 쿼리 이미지 경로 또는 PIL Image 객체
+        image_list: 비교할 이미지 목록
+        bbox: 쿼리 이미지의 관심 영역 바운딩 박스
+        threshold: 유사도 임계값 (이 값 이상인 경우 유사한 것으로 판단)
+        
+    Returns:
+        Tuple (가장 유사한 이미지 인덱스, 유사도 점수, 모든 이미지의 유사도 점수 리스트)
+        유사한 이미지가 없는 경우 인덱스는 -1
+    """
+    # 쿼리 이미지 특징 추출
+    query_features = extract_features_clip(query_image, bbox)
+    
+    similarities = []
+    # 각 이미지와의 유사도 계산
+    for img in image_list:
+        img_features = extract_features_clip(img)
+        similarity = compute_similarity(query_features, img_features)
+        similarities.append(similarity)
+    
+    # 가장 유사한 이미지 찾기
+    if not similarities:
+        return -1, 0.0, []
+    
+    max_similarity = max(similarities)
+    most_similar_idx = similarities.index(max_similarity)
+    
+    # 임계값보다 낮으면 유사한 이미지가 없는 것으로 판단
+    if max_similarity < threshold:
+        return -1, max_similarity, similarities
+    
+    return most_similar_idx, max_similarity, similarities
