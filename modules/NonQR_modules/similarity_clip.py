@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 import clip
 from typing import Tuple, List, Union
+import os
 
 # CLIP 모델 로드
 device = "cuda" if torch.cuda.is_available() else "cpu"

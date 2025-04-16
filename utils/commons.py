@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from .settings import logValue, toleranceValue
 
-#def generate_unique_nickname(base_name, inventory):
+# def generate_unique_nickname(base_name, inventory):
 #    """
 #    중복 닉네임 방지 함수
 #    """
@@ -64,3 +64,7 @@ def compare_storages(prev_data, new_data, tolerance=toleranceValue):
         )
     }
     return added, removed, moved
+
+def log_debug(debugMode, message):
+    if debugMode:
+        print(f"[DEBUG] {datetime.now()}: {message}")

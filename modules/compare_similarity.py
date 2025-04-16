@@ -1,11 +1,13 @@
-"""CLIP 기반 이미지 유사도 비교"""
-
+# libarays
 import torch
 import numpy as np
 from PIL import Image
 import clip
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Dict
 import os
+
+# custom modules
+from db import delete_temp
 
 # CLIP 모델 로드
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -47,6 +49,7 @@ def compute_similarity(features1: np.ndarray, features2: np.ndarray) -> float:
     """
     return float(np.dot(features1, features2))
 
+# 현재 미사용
 def compare_images(image1: Union[str, Image.Image], 
                   image2: Union[str, Image.Image]) -> float:
     """
@@ -69,23 +72,27 @@ def compare_images(image1: Union[str, Image.Image],
     # 유사도 계산 및 반환
     return compute_similarity(features1, features2)
 
-def compare_data_lists_clip(storage_list, new_data_list, temp_data_list, threshold=0.85): # temp_data_list 인자 추가
+# Storage - Temp - New 비교
+def compare_data_lists_clip(storage_list: List[Dict],
+                            new_data_list: List[Dict],
+                            temp_data_list: List[Dict],
+                            threshold: float = 0.85) -> Tuple[Dict, Dict, Dict]:
     """
-    storage 리스트와 new_data 리스트를 CLIP 이미지 유사도를 사용하여 비교합니다.
-    추가된 항목은 temp_data 리스트와도 비교하여 유사한 항목이 있으면 nickname을 가져옵니다.
-    각 항목은 'image' (이미지 파일명 또는 식별자), 'x', 'y' 키를 포함하고,
-    실제 이미지 데이터에 접근 가능해야 합니다 (예: image_base_path 와 'image' 결합).
+    storage, new_data, temp 리스트를 CLIP 이미지 유사도를 사용하여 비교
+    - storage와 new_data를 비교하여 moved, removed 항목 식별
+    - new_data 중 storage와 매칭되지 않은 항목은 added 후보로 지정
+    - added 후보는 temp_data와 비교하여 유사한 항목이 있으면 nickname을 가져옴
 
     Args:
-        storage_list (list): 현재 저장소 상태 리스트.
-        new_data_list (list): 새로 감지된 객체 정보 리스트.
-        temp_data_list (list): 임시 저장소 데이터 리스트. # 인자 설명 추가
-        threshold (float): 유사도 임계값 (이 값 이상이면 동일 항목으로 간주).
-        image_base_path (str): 'image' 필드가 파일명일 경우, 이미지가 저장된 기본 경로.
+        storage_list (list): 현재 저장소 상태 리스트 (dict 포함). 각 dict는 'image', 'x', 'y', 'id', 'nickname' 등 포함
+        new_data_list (list): 새로 감지된 객체 정보 리스트 (dict 포함). 각 dict는 'image', 'x', 'y', 'nickname' 등 포함
+        temp_data_list (list, optional): 임시 저장소 데이터 리스트 (dict 포함). 각 dict는 'image', 'nickname', 'id' 등 포함
+        threshold (float): 유사도 임계값 (이 값 이상이면 동일 항목으로 간주)
 
     Returns:
         tuple: (added, removed, moved) 딕셔너리 튜플.
                키는 각 항목의 'image' 식별자를 사용합니다.
+               added 항목은 temp에서 가져온 nickname을 포함할 수 있습니다.
     """
     added = {}
     removed = {}
@@ -94,113 +101,127 @@ def compare_data_lists_clip(storage_list, new_data_list, temp_data_list, thresho
     img_base_path = "./db/imgs"
     storage_img_path = os.path.join(img_base_path, "storage")
     new_data_img_path = os.path.join(img_base_path, "new")
-    temp_img_path = os.path.join(img_base_path, "temp") # temp 이미지 경로 추가
+    temp_img_path = os.path.join(img_base_path, "temp")
 
-    # 성능 향상을 위해 특징 미리 추출
-    storage_features = {}
-    new_data_features = {}
-    temp_features = {} # temp 특징 딕셔너리 초기화
-    try:
-        storage_features = {
-            item['image']: extract_features_clip(Image.open(os.path.join(storage_img_path, item['image'])))
-            for item in storage_list if 'image' in item and os.path.exists(os.path.join(storage_img_path, item['image']))
-        }
-        new_data_features = {
-            item['image']: extract_features_clip(Image.open(os.path.join(new_data_img_path, item['image'])))
-            for item in new_data_list if 'image' in item and os.path.exists(os.path.join(new_data_img_path, item['image']))
-        }
-        # temp 데이터 특징 추출 추가
-        temp_features = {
-            item['image']: extract_features_clip(Image.open(os.path.join(temp_img_path, item['image'])))
-            for item in temp_data_list if 'image' in item and os.path.exists(os.path.join(temp_img_path, item['image']))
-        }
-    except Exception as e:
-         print(f"Error pre-extracting features: {e}. Proceeding without pre-extraction.")
-         # 오류 발생 시, 아래 루프에서 개별적으로 특징 추출/비교 수행하도록 fallback 로직 추가 필요
-         # 여기서는 간단히 빈 dict로 초기화하고, 아래 로직은 개별 비교를 가정하고 진행
-         storage_features = {}
-         new_data_features = {}
-         temp_features = {}
+# ---특징 미리 추출---
 
+    def extract_features_safe(item_list, path):
+        features = {}
+        for item in item_list:
+            img_name = item.get('image')
+            if not img_name: continue
+            img_path = os.path.join(path, img_name)
+            if os.path.exists(img_path):
+                try:
+                    img = Image.open(img_path)
+                    features[img_name] = extract_features_clip(img)
+                except Exception as e:
+                    print(f"Error extracting features for {img_path}: {e}")
+            # else: print(f"Image not found for feature extraction: {img_path}") # 디버깅용
+        return features
 
-    # 매칭된 인덱스 추적 (중복 매칭 방지)
+    storage_features = extract_features_safe(storage_list, storage_img_path)
+    new_data_features = extract_features_safe(new_data_list, new_data_img_path)
+    temp_features = {}
+    if temp_data_list:
+        temp_features = extract_features_safe(temp_data_list, temp_img_path)
+
+# ---특징 미리 추출 완료---
+
+# ---매칭된 키 추적용 세트 초기화---
     matched_storage_keys = set()
     matched_new_data_keys = set()
+# ---매칭된 키 추적용 세트 초기화 완료---
 
-    # 1. 새로운 데이터(new_data)를 기준으로 기존 데이터(storage)와 비교
-    for new_key, new_item in new_data_features.items(): # 특징 추출된 new_data 기준 순회
+# ---new_data vs storage 비교 (moved 식별)---
+
+    for new_key, new_feature in new_data_features.items():
         best_match_storage_key = None
         max_similarity = -1.0
-        new_item_full = next((item for item in new_data_list if item['image'] == new_key), None) # 원본 new_data 항목 찾기
-        if not new_item_full: continue # 원본 항목 없으면 건너뛰기
-
-        new_feature = new_item # 미리 추출된 특징 사용
 
         for storage_key, storage_feature in storage_features.items():
-            if storage_key in matched_storage_keys:
-                continue # 이미 매칭된 storage 항목은 건너뛰기
+            if storage_key in matched_storage_keys: continue
 
-            # 미리 추출된 특징 벡터로 유사도 계산
-            similarity = float(np.dot(new_feature, storage_feature)) # compute_similarity 와 동일
+            similarity = compute_similarity(new_feature, storage_feature)
 
             if similarity > max_similarity:
                 max_similarity = similarity
                 best_match_storage_key = storage_key
 
-        # 가장 유사한 항목이 임계값을 넘고, 아직 매칭되지 않았다면 매칭 처리
         if max_similarity >= threshold and best_match_storage_key:
             matched_storage_keys.add(best_match_storage_key)
             matched_new_data_keys.add(new_key)
 
-            storage_match_item = next((item for item in storage_list if item['image'] == best_match_storage_key), None)
-            if not storage_match_item: continue # 원본 storage 항목 없으면 건너뛰기
+            storage_match_item = next((item for item in storage_list if item.get('image') == best_match_storage_key), None)
+            new_item_full = next((item for item in new_data_list if item.get('image') == new_key), None)
 
-            # 좌표 비교하여 이동 여부 판단
-            storage_x = storage_match_item.get('x')
-            storage_y = storage_match_item.get('y')
-            new_x = new_item_full.get('x')
-            new_y = new_item_full.get('y')
+            if storage_match_item and new_item_full:
+                storage_x = storage_match_item.get('x')
+                storage_y = storage_match_item.get('y')
+                storage_nickname = storage_match_item.get('nickname', 'UNKNOWN')
+                new_x = new_item_full.get('x')
+                new_y = new_item_full.get('y')
 
-            if (storage_x is not None and storage_y is not None and
-                    new_x is not None and new_y is not None and
-                    (storage_x != new_x or storage_y != new_y)):
-                moved[new_key] = { # 키는 새로운 항목의 image 식별자 사용
-                    "previous": {"x": storage_x, "y": storage_y, "image": storage_match_item['image']},
-                    "current": {"x": new_x, "y": new_y, "image": new_item_full['image']},
-                    "nickname": new_item_full.get("nickname", storage_match_item.get("nickname")),
-                    "similarity": float(max_similarity)
-                }
-            # else: 유사하고 위치 변화 없으면 아무것도 안 함
+                # 위치가 변경되었는지 확인 (좌표 존재 시)
+                is_moved = (storage_x is not None and storage_y is not None and
+                            new_x is not None and new_y is not None and
+                            (storage_x != new_x or storage_y != new_y))
 
-    # 2. 매칭되지 않은 새로운 데이터는 'added'로 처리
+                if is_moved:
+                    moved[new_key] = {
+                        "previous": {"x": storage_x, "y": storage_y, "image": storage_match_item['image']},
+                        "current": {"x": new_x, "y": new_y, "image": new_item_full['image']},
+                        "nickname": storage_nickname,
+                        "similarity": float(max_similarity)
+                    }
+            # else: print(f"Warning: Original item not found for matched key {best_match_storage_key} or {new_key}") # 디버깅용
+
+# ---new_data vs storage 비교 (moved 식별) 완료---
+
+# ---매칭되지 않은 new_data 처리 (added 후보 + temp 비교)---
+
     for new_key, new_feature in new_data_features.items():
         if new_key not in matched_new_data_keys:
-             new_item_full = next((item for item in new_data_list if item['image'] == new_key), None)
-             if new_item_full:
-                 # temp_data와 비교하여 nickname 가져오기 시도
-                 best_temp_match_key = None
-                 max_temp_similarity = -1.0
-                 for temp_key, temp_feature in temp_features.items():
-                     # 미리 추출된 특징 벡터로 유사도 계산
-                     similarity = float(np.dot(new_feature, temp_feature))
-                     if similarity > max_temp_similarity:
-                         max_temp_similarity = similarity
-                         best_temp_match_key = temp_key
+            new_item_full = next((item for item in new_data_list if item.get('image') == new_key), None)
+            if not new_item_full: continue
 
-                 # 임계값 이상으로 유사한 temp 항목이 있다면 nickname 사용
-                 if max_temp_similarity >= threshold and best_temp_match_key:
-                     temp_match_item = next((item for item in temp_data_list if item['image'] == best_temp_match_key), None)
-                     if temp_match_item and 'nickname' in temp_match_item:
-                         new_item_full['nickname'] = temp_match_item['nickname']
-                         # print(f"Found similar item in temp for {new_key}. Using nickname: {temp_match_item['nickname']}") # 디버깅용 로그
+            found_temp_nickname = None
+            max_temp_similarity = -1.0
 
-                 added[new_key] = new_item_full # 최종 nickname이 반영된 new_item_full 추가
+            # temp 데이터와 비교
+            if temp_features: # temp 특징이 추출되었을 경우
+                for temp_key, temp_feature in temp_features.items():
+                    similarity = compute_similarity(new_feature, temp_feature)
+                    if similarity > max_temp_similarity:
+                        max_temp_similarity = similarity
+                        if similarity >= threshold:
+                            temp_match_item = next((item for item in temp_data_list if item.get('image') == temp_key), None)
+                            if temp_match_item:
+                                found_temp_nickname = temp_match_item.get('nickname')
+                                # temp의 이미지 삭제
+                                file_path = os.path.join(temp_img_path, temp_key)
+                                if os.path.isfile(file_path) or os.path.islink(file_path):
+                                    os.unlink(file_path)
+                                # db에서 해당 항목 삭제
+                                delete_temp(temp_match_item['id'])
+                                
+                                # print(f"Found similar item in temp for {new_key} (Sim: {similarity:.4f}). Using nickname: {found_temp_nickname}") # 디버깅용
 
-    # 3. 매칭되지 않은 기존 데이터는 'removed'로 처리
+            # added 딕셔너리에 추가 (temp 닉네임 우선 적용)
+            added_item = new_item_full.copy() # 원본 수정을 피하기 위해 복사
+            added_item['nickname'] = found_temp_nickname if found_temp_nickname else added_item.get('nickname', 'NEW ITEM')
+            added[new_key] = added_item
+
+# ---매칭되지 않은 new_data 처리 (added 후보 + temp 비교) 완료---
+
+# ---매칭되지 않은 storage 데이터 처리 (removed)---
+
     for storage_key, storage_feature in storage_features.items():
         if storage_key not in matched_storage_keys:
-            storage_item_full = next((item for item in storage_list if item['image'] == storage_key), None)
+            storage_item_full = next((item for item in storage_list if item.get('image') == storage_key), None)
             if storage_item_full:
                 removed[storage_key] = storage_item_full
+
+# ---매칭되지 않은 storage 데이터 처리 (removed) 완료---
 
     return added, removed, moved

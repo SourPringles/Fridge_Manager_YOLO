@@ -20,5 +20,8 @@ def reset_storage():
 
     if os.path.exists("./db/imgs/storage"):
         shutil.rmtree("./db/imgs/storage")
+    
+    if os.path.exists("./db/imgs/temp"):
+        shutil.rmtree("./db/imgs/temp")
 
     return jsonify({"message": "storage has been reset.", "storage": storage, "temp": temp}), 200
