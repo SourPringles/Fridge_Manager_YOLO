@@ -1,5 +1,5 @@
 import cv2
-from modules.NonQR_modules import objectDetection
+from NonQR_modules import objectDetection
 from NonQR_modules import compare_images
 from commons import convert_cv2_to_pil
 
@@ -46,3 +46,9 @@ data = load_image_from_path('./test/NonQRtest/1_changed.jpg')
 #
 #score = compare_images(image1, image2)
 #print(f"두 이미지의 유사도: {score:.4f}")
+#import shutil
+#img_dir = "./db/imgs/new"
+#if os.path.exists(img_dir):
+#        shutil.rmtree(img_dir)
+#else:
+#    os.makedirs(img_dir)

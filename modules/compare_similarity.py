@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 import clip
 from typing import Tuple, List, Union
+import os
 
 # CLIP 모델 로드
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -68,56 +69,17 @@ def compare_images(image1: Union[str, Image.Image],
     # 유사도 계산 및 반환
     return compute_similarity(features1, features2)
 
-def find_most_similar_image(query_image: Union[str, Image.Image], 
-                           image_list: List[Union[str, Image.Image]], 
-                           bbox: Tuple[int, int, int, int] = None,
-                           threshold: float = 0.75) -> Tuple[int, float, List[float]]:
-    """
-    쿼리 이미지와 가장 유사한 이미지를 목록에서 찾습니다.
-    
-    Args:
-        query_image: 쿼리 이미지 경로 또는 PIL Image 객체
-        image_list: 비교할 이미지 목록
-        bbox: 쿼리 이미지의 관심 영역 바운딩 박스
-        threshold: 유사도 임계값 (이 값 이상인 경우 유사한 것으로 판단)
-        
-    Returns:
-        Tuple (가장 유사한 이미지 인덱스, 유사도 점수, 모든 이미지의 유사도 점수 리스트)
-        유사한 이미지가 없는 경우 인덱스는 -1
-    """
-    # 쿼리 이미지 특징 추출
-    query_features = extract_features_clip(query_image, bbox)
-    
-    similarities = []
-    # 각 이미지와의 유사도 계산
-    for img in image_list:
-        img_features = extract_features_clip(img)
-        similarity = compute_similarity(query_features, img_features)
-        similarities.append(similarity)
-    
-    # 가장 유사한 이미지 찾기
-    if not similarities:
-        return -1, 0.0, []
-    
-    max_similarity = max(similarities)
-    most_similar_idx = similarities.index(max_similarity)
-    
-    # 임계값보다 낮으면 유사한 이미지가 없는 것으로 판단
-    if max_similarity < threshold:
-        return -1, max_similarity, similarities
-    
-    return most_similar_idx, max_similarity, similarities
-
-
-def compare_data_lists_clip(storage_list, new_data_list, threshold=0.85, image_base_path=""):
+def compare_data_lists_clip(storage_list, new_data_list, temp_data_list, threshold=0.85): # temp_data_list 인자 추가
     """
     storage 리스트와 new_data 리스트를 CLIP 이미지 유사도를 사용하여 비교합니다.
+    추가된 항목은 temp_data 리스트와도 비교하여 유사한 항목이 있으면 nickname을 가져옵니다.
     각 항목은 'image' (이미지 파일명 또는 식별자), 'x', 'y' 키를 포함하고,
     실제 이미지 데이터에 접근 가능해야 합니다 (예: image_base_path 와 'image' 결합).
 
     Args:
         storage_list (list): 현재 저장소 상태 리스트.
         new_data_list (list): 새로 감지된 객체 정보 리스트.
+        temp_data_list (list): 임시 저장소 데이터 리스트. # 인자 설명 추가
         threshold (float): 유사도 임계값 (이 값 이상이면 동일 항목으로 간주).
         image_base_path (str): 'image' 필드가 파일명일 경우, 이미지가 저장된 기본 경로.
 
@@ -129,16 +91,28 @@ def compare_data_lists_clip(storage_list, new_data_list, threshold=0.85, image_b
     removed = {}
     moved = {}
 
-    # 성능 향상을 위해 특징 미리 추출 (선택 사항, 이미지 로딩/추출이 반복되는 것을 방지)
-    # 실제 구현에서는 이미지 경로/데이터 유효성 검사 필요
+    img_base_path = "./db/imgs"
+    storage_img_path = os.path.join(img_base_path, "storage")
+    new_data_img_path = os.path.join(img_base_path, "new")
+    temp_img_path = os.path.join(img_base_path, "temp") # temp 이미지 경로 추가
+
+    # 성능 향상을 위해 특징 미리 추출
+    storage_features = {}
+    new_data_features = {}
+    temp_features = {} # temp 특징 딕셔너리 초기화
     try:
         storage_features = {
-            item['image']: extract_features_clip(Image.open(os.path.join(image_base_path, item['image'])))
-            for item in storage_list if 'image' in item and os.path.exists(os.path.join(image_base_path, item['image']))
+            item['image']: extract_features_clip(Image.open(os.path.join(storage_img_path, item['image'])))
+            for item in storage_list if 'image' in item and os.path.exists(os.path.join(storage_img_path, item['image']))
         }
         new_data_features = {
-            item['image']: extract_features_clip(Image.open(os.path.join(image_base_path, item['image'])))
-            for item in new_data_list if 'image' in item and os.path.exists(os.path.join(image_base_path, item['image']))
+            item['image']: extract_features_clip(Image.open(os.path.join(new_data_img_path, item['image'])))
+            for item in new_data_list if 'image' in item and os.path.exists(os.path.join(new_data_img_path, item['image']))
+        }
+        # temp 데이터 특징 추출 추가
+        temp_features = {
+            item['image']: extract_features_clip(Image.open(os.path.join(temp_img_path, item['image'])))
+            for item in temp_data_list if 'image' in item and os.path.exists(os.path.join(temp_img_path, item['image']))
         }
     except Exception as e:
          print(f"Error pre-extracting features: {e}. Proceeding without pre-extraction.")
@@ -146,6 +120,7 @@ def compare_data_lists_clip(storage_list, new_data_list, threshold=0.85, image_b
          # 여기서는 간단히 빈 dict로 초기화하고, 아래 로직은 개별 비교를 가정하고 진행
          storage_features = {}
          new_data_features = {}
+         temp_features = {}
 
 
     # 매칭된 인덱스 추적 (중복 매칭 방지)
@@ -202,7 +177,24 @@ def compare_data_lists_clip(storage_list, new_data_list, threshold=0.85, image_b
         if new_key not in matched_new_data_keys:
              new_item_full = next((item for item in new_data_list if item['image'] == new_key), None)
              if new_item_full:
-                 added[new_key] = new_item_full
+                 # temp_data와 비교하여 nickname 가져오기 시도
+                 best_temp_match_key = None
+                 max_temp_similarity = -1.0
+                 for temp_key, temp_feature in temp_features.items():
+                     # 미리 추출된 특징 벡터로 유사도 계산
+                     similarity = float(np.dot(new_feature, temp_feature))
+                     if similarity > max_temp_similarity:
+                         max_temp_similarity = similarity
+                         best_temp_match_key = temp_key
+
+                 # 임계값 이상으로 유사한 temp 항목이 있다면 nickname 사용
+                 if max_temp_similarity >= threshold and best_temp_match_key:
+                     temp_match_item = next((item for item in temp_data_list if item['image'] == best_temp_match_key), None)
+                     if temp_match_item and 'nickname' in temp_match_item:
+                         new_item_full['nickname'] = temp_match_item['nickname']
+                         # print(f"Found similar item in temp for {new_key}. Using nickname: {temp_match_item['nickname']}") # 디버깅용 로그
+
+                 added[new_key] = new_item_full # 최종 nickname이 반영된 new_item_full 추가
 
     # 3. 매칭되지 않은 기존 데이터는 'removed'로 처리
     for storage_key, storage_feature in storage_features.items():
