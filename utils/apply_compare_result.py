@@ -1,10 +1,13 @@
-# librarys
+# Base Librarys
 from datetime import datetime
 import os
 import shutil
 
-# custom modules
+# Libraries
+
+# Custom Modules
 from db import update_storage, delete_storage, update_temp
+
 
 # Added 처리 -> moved 처리 -> removed 처리 -> new 폴더 정리
 def apply_compare_result(added, removed, moved, storage_data):

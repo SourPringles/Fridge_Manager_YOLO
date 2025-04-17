@@ -1,5 +1,11 @@
+# Base Libraries
+
+# Libraries
 from PIL import Image
 import cv2
+
+# Custom Modules
+
 
 def convert_cv2_to_pil(image):
     rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

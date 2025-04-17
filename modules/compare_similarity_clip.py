@@ -1,13 +1,17 @@
-# libarays
+# Base Libraries
+import os
+from typing import Tuple, List, Union, Dict
+
+# Libarays
 import torch
 import numpy as np
 from PIL import Image
 import clip
-from typing import Tuple, List, Union, Dict
-import os
 
-# custom modules
+# Custom Modules
 from db import delete_temp
+from utils.settings import BASEIMGDIR, CLIPTHRESHOLD
+
 
 # CLIP 모델 로드
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -76,7 +80,7 @@ def compare_images(image1: Union[str, Image.Image],
 def compare_data_lists_clip(storage_list: List[Dict],
                             new_data_list: List[Dict],
                             temp_data_list: List[Dict],
-                            threshold: float = 0.85) -> Tuple[Dict, Dict, Dict]:
+                            threshold=CLIPTHRESHOLD) -> Tuple[Dict, Dict, Dict]:
     """
     storage, new_data, temp 리스트를 CLIP 이미지 유사도를 사용하여 비교
     - storage와 new_data를 비교하여 moved, removed 항목 식별
@@ -98,7 +102,7 @@ def compare_data_lists_clip(storage_list: List[Dict],
     removed = {}
     moved = {}
 
-    img_base_path = "./db/imgs"
+    img_base_path = BASEIMGDIR
     storage_img_path = os.path.join(img_base_path, "storage")
     new_data_img_path = os.path.join(img_base_path, "new")
     temp_img_path = os.path.join(img_base_path, "temp")

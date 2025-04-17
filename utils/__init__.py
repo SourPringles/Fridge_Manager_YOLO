@@ -18,5 +18,5 @@ def register_blueprints_sub(app):
 __all__ = [
     "init_scheduler", 
     "apply_compare_result", 
-    "register_blueprints_sub"
+    "register_blueprints_sub",
     ]

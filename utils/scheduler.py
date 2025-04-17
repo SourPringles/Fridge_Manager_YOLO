@@ -1,10 +1,14 @@
-# librarys
-from flask_apscheduler import APScheduler
-from datetime import datetime # datetime import 확인
-import os # os import 확인
+# Base Librarys
+from datetime import datetime
+import os
 
-# custom modules
+# Libraries
+from flask_apscheduler import APScheduler
+
+# Custom Modules
 from db import load_temp, delete_temp # db 함수 import 확인
+from utils.settings import TIMEOUTVALUE
+
 
 # 스케줄러 인스턴스 생성
 scheduler = APScheduler()
@@ -12,10 +16,6 @@ scheduler = APScheduler()
 # 스케줄러 설정 클래스
 class SchedulerConfig:
     SCHEDULER_API_ENABLED = True
-
-# 주기적으로 실행할 작업 함수 정의
-# 테스트 상수 -> settings.py로 이동할 것
-TIMEOUTVALUE = 10   # 초
 
 @scheduler.task('interval', id='check_temp', seconds=60*30, misfire_grace_time=900)
 def check_temp():
