@@ -1,37 +1,58 @@
 import sqlite3
-from .commons_db import *
+from .commons_db import _get_connection # 명시적 임포트 또는 * 사용 유지
 
 def load_temp():
     """
     데이터베이스(temp)에서 임시 반출 목록 로드
     """
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM temp')
-    rows = cursor.fetchall()
-    conn.close()
-    temp = {row[0]: {"takeout_time": row[1], "nickname": row[2]} for row in rows}
+    temp = []
+    try:
+        # with 문으로 연결 관리
+        with _get_connection() as conn:
+            conn.row_factory = sqlite3.Row # 결과를 딕셔너리처럼 접근 가능하게 설정
+            cursor = conn.cursor()
+            # 테이블 이름 수정: tempV2 -> temp
+            cursor.execute('SELECT id, image, timestamp, nickname FROM temp')
+            rows = cursor.fetchall()
+            # row_factory 사용 시 더 간결하게 변환 가능
+            for row in rows:
+                temp.append(dict(row))
+    except sqlite3.Error as e:
+        print(f"Error loading temp: {e}")
     return temp
 
-def update_temp(qr_code, takeout_time, nickname):
+def update_temp(data):
     """
-    데이터베이스(temp)에 항목 저장 또는 업데이트
+    데이터베이스(temp)에 항목 저장 또는 업데이트 (ID는 자동 관리)
     """
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT OR REPLACE INTO temp (qr_code, takeout_time, nickname)
-        VALUES (?, ?, ?)
-    ''', (qr_code, takeout_time, nickname))
-    conn.commit()
-    conn.close()
+    try:
+        # with 문으로 연결 관리
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            # 테이블 이름 수정: tempV2 -> temp
+            # 함수 시그니처 변경: 개별 인자 -> data 딕셔너리
+            # SQL 수정: ID 자동 증가, 플레이스홀더 및 값 개수 일치
+            cursor.execute('''
+                INSERT OR REPLACE INTO temp (image, timestamp, nickname)
+                VALUES (?, ?, ?)
+            ''', (data["image"], data["timestamp"], data["nickname"]))
+            conn.commit()
+    except sqlite3.Error as e:
+        print(f"Error updating temp: {e}")
+    except KeyError as e:
+        print(f"Error updating temp: Missing key {e} in data")
 
-def delete_temp(qr_code):
+
+def delete_temp(item_id):
     """
-    데이터베이스(temp)에서 항목 삭제
+    데이터베이스(temp)에서 ID로 항목 삭제
     """
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM temp WHERE qr_code = ?', (qr_code,))
-    conn.commit()
-    conn.close()
+    try:
+        # with 문으로 연결 관리
+        with _get_connection() as conn:
+            cursor = conn.cursor()
+            # 테이블 이름은 이미 'temp'로 올바름
+            cursor.execute('DELETE FROM temp WHERE id = ?', (item_id,)) # 변수명 id -> item_id (명확성)
+            conn.commit()
+    except sqlite3.Error as e:
+        print(f"Error deleting temp item with id {item_id}: {e}")
