@@ -1,13 +1,13 @@
 # librarys
 from flask import Blueprint, request, jsonify
-from datetime import datetime
 import cv2
 import numpy as np
 import os
+import shutil
 
 # custom modules
-from db import load_storage, update_storage, delete_storage, load_temp, update_temp, delete_temp
-from modules.NonQR_modules.objectDetection import detect_objects_yolo
+from db import load_storage, update_storage, load_temp
+from modules import detect_objects_yolo, compare_data_lists_clip
 from utils import apply_compare_result
 
 updateStorage_bp = Blueprint('updateStorage', __name__)
@@ -54,7 +54,7 @@ def updateStorage():
     (list)
     input_data = {
             #"id": i,
-            "image": f"{i+1}.jpg",  # 잘라낸 각 객체의 이미지
+            "image": "uuid",  # 잘라낸 각 객체의 이미지
             "nickname": "NEW ITEM",
             "x": round((x1 + x2) / 2), 
             "y": round((y1 + y2) / 2),
@@ -69,17 +69,22 @@ def updateStorage():
 
     # --만약 이전 저장소가 없다면: input_data를 storage에 추가
     if not storage_data:
+
         # db에 저장
         for data in input_data:
             update_storage(data)
+
+        if os.path.exists("./db/imgs/storage"):
+            shutil.rmtree("./db/imgs/storage")
+
         os.rename("./db/imgs/new", "./db/imgs/storage") # db/imgs/new -> db/imgs/storage로 이동
+        
         return jsonify({"added": input_data}), 200
 
     # storage_data는 기존 데이터, new_data는 새로운 데이터
     # db/imgs 폴더의 storage폴더는 기존 이미지, new폴더는 새로운 이미지
 
     # 비교 함수 호출(clip 모델 사용)
-    from modules.compare_similarity import compare_data_lists_clip
     added, removed, moved = compare_data_lists_clip(storage_data, input_data, temp_data)
 
 # ---저장소 비교 완료---
@@ -98,7 +103,7 @@ def updateStorage():
 # ---결과 반영 종료---
 
 # ---결과 출력---
-    print(f"Added: {added}, Removed: {removed}, Moved: {moved}")
+    #print(f"Added: {added}, Removed: {removed}, Moved: {moved}")
 
     return jsonify({"added": len(added), "removed": len(removed), "moved": len(moved)}), 200
     #return jsonify({"added": added, "removed": removed, "moved": moved}), 200

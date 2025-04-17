@@ -1,4 +1,7 @@
+# library
 from flask import Blueprint, jsonify
+
+# custom modules
 from db import load_temp # db로딩함수
 
 getTemp_bp = Blueprint('getTemp', __name__)

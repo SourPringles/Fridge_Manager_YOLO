@@ -1,6 +1,6 @@
 import os
 from datetime import datetime
-from .settings import logValue, toleranceValue
+from ..utils.settings import logValue, toleranceValue
 
 # def generate_unique_nickname(base_name, inventory):
 #    """

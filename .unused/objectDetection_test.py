@@ -1,5 +1,5 @@
 import cv2
-from NonQR_modules import objectDetection
+from modules import objectDetection
 from NonQR_modules import compare_images
 from commons import convert_cv2_to_pil
 

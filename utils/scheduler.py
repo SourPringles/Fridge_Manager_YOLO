@@ -14,15 +14,18 @@ class SchedulerConfig:
     SCHEDULER_API_ENABLED = True
 
 # 주기적으로 실행할 작업 함수 정의
-TIMEOUTVALUE = 10800   # 초
+# 테스트 상수 -> settings.py로 이동할 것
+TIMEOUTVALUE = 10   # 초
 
-@scheduler.task('interval', id='my_background_task', seconds=60, misfire_grace_time=900)
-def background_task():
-    """60초마다 실행될 백그라운드 작업입니다."""
-    print(f"백그라운드 작업 실행: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    # current_time을 datetime 객체로 유지합니다.
+@scheduler.task('interval', id='check_temp', seconds=60*30, misfire_grace_time=900)
+def check_temp():
+    """
+    30분마다 실행
+    Temp 테이블에서 timestamp가 현재시간 - 3시간 이상인 항목을 삭제
+    """
+    print(f"Temp 파일 확인 실행: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
     current_time = datetime.now()
-    # 여기에 주기적으로 수행할 로직을 추가하세요.
 
     # temp 테이블에서 현재시간 - timestamp값이 3시간 이상인 항목 제거
     try:
@@ -35,7 +38,6 @@ def background_task():
                 if '.' in timestamp_str:
                     timestamp_str = timestamp_str.split('.')[0]
 
-                # 마이크로초가 제거된 문���열을 파싱하여 datetime 객체로 변환
                 timestamp_dt = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
 
                 # datetime 객체 간의 차이를 계산하고 초 단위로 변환

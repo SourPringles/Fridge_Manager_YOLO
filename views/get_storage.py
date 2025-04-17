@@ -1,4 +1,7 @@
+# library
 from flask import Blueprint, jsonify
+
+# custom modules
 from db import load_storage # db로딩함수
 
 getStorage_bp = Blueprint('getStorage', __name__)
