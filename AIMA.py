@@ -1,11 +1,11 @@
 # Base Libraries
 
-# Librarys
+# Libraries
 from flask import Flask, render_template
 
 # Custom Modules
 from views import register_blueprints_main
-from utils import register_blueprints_sub, init_scheduler
+from utils import register_blueprints_sub, init_scheduler, init_folders
 from db import init_db
 
 
@@ -21,6 +21,9 @@ def index():
 
 # Initialize the database
 init_db()
+
+# Initialize folders
+init_folders()
 
 # Register blueprints
 register_blueprints_main(AIMA)

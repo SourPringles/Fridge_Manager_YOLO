@@ -4,7 +4,7 @@ import shutil
 import uuid # 이미지 uuid 생성
 from datetime import datetime
 
-# Librarys
+# Libraries
 from ultralytics import YOLO
 
 # Custom Modules

@@ -2,7 +2,7 @@
 import os
 import shutil
 
-# Librarys
+# Libraries
 from flask import Blueprint, request, jsonify
 import cv2
 import numpy as np

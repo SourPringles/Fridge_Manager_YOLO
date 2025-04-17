@@ -2,7 +2,7 @@
 import os
 from typing import Tuple, List, Union, Dict
 
-# Libarays
+# Libraries
 import torch
 import numpy as np
 from PIL import Image

@@ -1,5 +1,5 @@
 # Scheduler
-from .scheduler import init_scheduler
+from .init_scheduler import init_scheduler
 
 # Blueprints
 from .update_nickname import rename_bp
@@ -7,6 +7,7 @@ from .reset_all import reset_bp
 from .test_connection import connectionTest_bp
 
 # Functions
+from .init_folders import init_folders
 from .apply_compare_result import apply_compare_result
 
 # Blueprint 등록
@@ -19,4 +20,5 @@ __all__ = [
     "init_scheduler", 
     "apply_compare_result", 
     "register_blueprints_sub",
+    "init_folders",
     ]

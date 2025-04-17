@@ -23,7 +23,7 @@ def check_temp():
     30분마다 실행
     Temp 테이블에서 timestamp가 현재시간 - 3시간 이상인 항목을 삭제
     """
-    print(f"Temp 파일 확인 실행: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"---Temp 파일 확인 실행: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}---")
 
     current_time = datetime.now()
 
@@ -49,9 +49,9 @@ def check_temp():
                     img_path = os.path.join("./db/imgs/temp/", data['image']) # os.path.join 사용 권장
                     if os.path.exists(img_path):
                         os.remove(img_path)
-                        print(f"삭제된 temp 항목 ID: {data['id']}, 이미지: {data['image']}")
+                        print(f"--삭제된 temp 항목 ID: {data['id']}, 이미지: {data['image']}--")
                     else:
-                        print(f"삭제된 temp 항목 ID: {data['id']}, 이미지 파일 없음: {img_path}")
+                        print(f"--삭제된 temp 항목 ID: {data['id']}, 이미지 파일 없음: {img_path}--")
                 #else:
                 #    print(f"유효한 temp 항목 ID: {data['id']}")
             except ValueError as e:

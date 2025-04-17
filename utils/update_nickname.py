@@ -1,6 +1,6 @@
 # Base Librarys
 
-# Librarys
+# Libraries
 from flask import Blueprint, jsonify
 
 # Custom Librarys
