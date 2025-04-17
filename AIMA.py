@@ -1,4 +1,9 @@
+# Base Libraries
+
+# Librarys
 from flask import Flask, render_template
+
+# Custom Modules
 from views import register_blueprints_main
 from utils import register_blueprints_sub, init_scheduler
 from db import init_db
