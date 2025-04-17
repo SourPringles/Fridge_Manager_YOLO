@@ -2,6 +2,7 @@ blinker==1.9.0
 certifi==2025.1.31
 charset-normalizer==3.4.1
 click==8.1.8
+clip @ git+https://github.com/openai/CLIP.git@dcba3cb2e2827b402d2701e7e1c7d9fed8a20ef1
 colorama==0.4.6
 contourpy==1.3.0
 cycler==0.12.1
@@ -9,12 +10,15 @@ filelock==3.18.0
 Flask==3.1.0
 fonttools==4.57.0
 fsspec==2025.3.2
+ftfy==6.3.1
 idna==3.10
+imageio==2.37.0
 importlib_metadata==8.6.1
 importlib_resources==6.5.2
 itsdangerous==2.2.0
 Jinja2==3.1.6
 kiwisolver==1.4.7
+lazy_loader==0.4
 MarkupSafe==3.0.2
 matplotlib==3.9.4
 mpmath==1.3.0
@@ -31,11 +35,14 @@ python-dateutil==2.9.0.post0
 pytz==2025.2
 PyYAML==6.0.2
 pyzbar==0.1.9
+regex==2024.11.6
 requests==2.32.3
+scikit-image==0.24.0
 scipy==1.13.1
 seaborn==0.13.2
 six==1.17.0
 sympy==1.13.1
+tifffile==2024.8.30
 torch==2.6.0
 torchvision==0.21.0
 tqdm==4.67.1
@@ -44,5 +51,6 @@ tzdata==2025.2
 ultralytics==8.3.103
 ultralytics-thop==2.0.14
 urllib3==2.3.0
+wcwidth==0.2.13
 Werkzeug==3.1.3
 zipp==3.21.0

@@ -92,13 +92,6 @@
             "description": "이미지에서 QR 코드를 감지하여 재고 상태를 업데이트합니다.",
             "request": [
                 {
-                    "name": "mode",
-                    "type": "string",
-                    "required": false,
-                    "default": "pyzbar",
-                    "description": "QR 인식 모드 (pyzbar, cv2, yolo)"
-                },
-                {
                     "name": "source",
                     "type": "file",
                     "required": true,
@@ -112,8 +105,33 @@
                 "mode_used": "pyzbar"
             },
             "example": {
-                "request": "POST /updateStorage HTTP/1.1\nHost: example.com\nContent-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW\n\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"mode\"\n\npyzbar\n------WebKitFormBoundary7MA4YWxkTrZu0gW\nContent-Disposition: form-data; name=\"source\"; filename=\"image.jpg\"\nContent-Type: image/jpeg\n\n[이미지 데이터]\n------WebKitFormBoundary7MA4YWxkTrZu0gW--",
+                "request": "POST /updateStorage HTTP/1.1\nHost: example.com\nContent-Type: multipart/form-data;",
                 "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"added\": {\n    \"QR12345\": {\n      \"nickname\": \"새 모니터\",\n      \"x\": 150,\n      \"y\": 250,\n      \"lastChecked\": \"2023-11-05 13:45:22\",\n      \"qr_code\": \"QR12345\"\n    }\n  },\n  \"removed\": {},\n  \"moved\": {\n    \"QR67890\": {\n      \"old\": {\"x\": 120, \"y\": 200},\n      \"new\": {\"x\": 130, \"y\": 210}\n    }\n  },\n  \"mode_used\": \"pyzbar\"\n}"
+            }
+        },
+        {
+            "id": "updateStorageV2",
+            "method": "POST",
+            "path": "/updateStorageV2",
+            "title": "재고 이미지 인식 및 업데이트",
+            "description": "이미지에서 물체를 감지하여 재고 상태를 업데이트합니다.",
+            "request": [
+                {
+                    "name": "source",
+                    "type": "file",
+                    "required": true,
+                    "description": "물체가 포함된 이미지 파일"
+                }
+            ],
+            "response": {
+                "added": "// 새로 추가된 아이템 정보",
+                "removed": "// 제거된 아이템 정보",
+                "moved": "// 위치가 변경된 아이템 정보",
+                "mode_used": "YOLO"
+            },
+            "example": {
+                "request": "POST /updateStorageV2 HTTP/1.1\nHost: example.com\nContent-Type: multipart/form-data;",
+                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"added\": {\n    \"1\": {\n      \"nickname\": \"새 모니터\",\n      \"x\": 150,\n      \"y\": 250,\n      \"lastChecked\": \"2023-11-05 13:45:22\",\n      \"id\": \"1\"\n    }\n  },\n  \"removed\": {},\n  \"moved\": {\n    \"2\": {\n      \"old\": {\"x\": 120, \"y\": 200},\n      \"new\": {\"x\": 130, \"y\": 210}\n    }\n  },\n  \"mode_used\": \"YOLO\"\n}"
             }
         },
         {
