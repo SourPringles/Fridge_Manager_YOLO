@@ -1,14 +1,17 @@
-# librarys
-from flask import Blueprint, request, jsonify
-import cv2
-import numpy as np
+# Base Libraries
 import os
 import shutil
 
-# custom modules
+# Libraries
+from flask import Blueprint, request, jsonify
+import cv2
+import numpy as np
+
+# Custom Modules
 from db import load_storage, update_storage, load_temp
 from modules import detect_objects_yolo, compare_data_lists_clip
 from utils import apply_compare_result
+from utils.settings import BASEIMGDIR
 
 updateStorage_bp = Blueprint('updateStorage', __name__)
 #debugMode = True
@@ -37,6 +40,14 @@ def updateStorage():
     """
 
 # ---저장소 로딩 완료---
+
+# ---각종 변수 초기화---
+    base_img_dir = BASEIMGDIR
+    new_img_dir = os.path.join(base_img_dir, "new")
+    storage_img_dir = os.path.join(base_img_dir, "storage")
+    #temp_img_dir = os.path.join(base_img_dir, "temp")
+
+# ---각종 변수 초기화 완료---
 
 # ---새로운 이미지 로드---
 
@@ -74,10 +85,11 @@ def updateStorage():
         for data in input_data:
             update_storage(data)
 
-        if os.path.exists("./db/imgs/storage"):
-            shutil.rmtree("./db/imgs/storage")
+        if os.path.exists(storage_img_dir):
+            shutil.rmtree(storage_img_dir)
 
-        os.rename("./db/imgs/new", "./db/imgs/storage") # db/imgs/new -> db/imgs/storage로 이동
+        os.rename(new_img_dir, storage_img_dir) # db/imgs/new -> db/imgs/storage로 이동
+        os.makedirs(new_img_dir, exist_ok=True) # 삭제된(변경된) 폴더 재생성
         
         return jsonify({"added": input_data}), 200
 

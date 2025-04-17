@@ -1,14 +1,18 @@
-# librarys
-from ultralytics import YOLO
-from datetime import datetime
+# Base Libraries
 import os
-import shutil   # 이미지 폴더 정리
+import shutil
 import uuid # 이미지 uuid 생성
+from datetime import datetime
 
-# custom modules
+# Libraries
+from ultralytics import YOLO
+
+# Custom Modules
 from modules import crop_object
+from utils.settings import BASEIMGDIR, YOLOMODELPATH, YOLOCONFIDENCE
 
-def detect_objects_yolo(image, model_path='AIMA_model.pt', confidence=0.59):
+
+def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDENCE):
     """
     물체를 인식하고 좌표를 반환하는 함수 (YOLO 사용)
     - image: OpenCV 이미지 객체
@@ -22,7 +26,8 @@ def detect_objects_yolo(image, model_path='AIMA_model.pt', confidence=0.59):
     #plotted_image = results[0].plot()
 
     objects = []
-    img_dir = "./db/imgs/new"
+    base_dir = BASEIMGDIR
+    img_dir = os.path.join(base_dir, "new")
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # 이미지 저장 폴더 생성

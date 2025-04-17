@@ -1,10 +1,14 @@
-# librarys
-from flask_apscheduler import APScheduler
-from datetime import datetime # datetime import 확인
-import os # os import 확인
+# Base Librarys
+from datetime import datetime
+import os
 
-# custom modules
+# Libraries
+from flask_apscheduler import APScheduler
+
+# Custom Modules
 from db import load_temp, delete_temp # db 함수 import 확인
+from utils.settings import TIMEOUTVALUE
+
 
 # 스케줄러 인스턴스 생성
 scheduler = APScheduler()
@@ -13,17 +17,13 @@ scheduler = APScheduler()
 class SchedulerConfig:
     SCHEDULER_API_ENABLED = True
 
-# 주기적으로 실행할 작업 함수 정의
-# 테스트 상수 -> settings.py로 이동할 것
-TIMEOUTVALUE = 10   # 초
-
 @scheduler.task('interval', id='check_temp', seconds=60*30, misfire_grace_time=900)
 def check_temp():
     """
     30분마다 실행
     Temp 테이블에서 timestamp가 현재시간 - 3시간 이상인 항목을 삭제
     """
-    print(f"Temp 파일 확인 실행: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"---Temp 파일 확인 실행: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}---")
 
     current_time = datetime.now()
 
@@ -49,9 +49,9 @@ def check_temp():
                     img_path = os.path.join("./db/imgs/temp/", data['image']) # os.path.join 사용 권장
                     if os.path.exists(img_path):
                         os.remove(img_path)
-                        print(f"삭제된 temp 항목 ID: {data['id']}, 이미지: {data['image']}")
+                        print(f"--삭제된 temp 항목 ID: {data['id']}, 이미지: {data['image']}--")
                     else:
-                        print(f"삭제된 temp 항목 ID: {data['id']}, 이미지 파일 없음: {img_path}")
+                        print(f"--삭제된 temp 항목 ID: {data['id']}, 이미지 파일 없음: {img_path}--")
                 #else:
                 #    print(f"유효한 temp 항목 ID: {data['id']}")
             except ValueError as e:
