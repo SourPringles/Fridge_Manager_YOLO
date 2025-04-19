@@ -1,7 +1,7 @@
-# AI_Item_Manage_API
+# Fridge_Manager_YOLO
 2025_01_CapstoneProject_II
 
-<b>AI Item Manage API With YOLOv8</b>
+<b>Fridge Item Manager With YOLOv8</b>
 
 Working Environments: Python 3.9.13 with Flask
 
