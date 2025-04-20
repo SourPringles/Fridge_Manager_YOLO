@@ -15,7 +15,7 @@ echo =========================================================
 :: 서버 실행
 echo Initializing API server... This may take a few seconds.
 echo =========================================================
-python AIMA.py
+python YIM.py
 
 :: 혹시 오류로 종료되었을 때 바로 닫히지 않도록
 pause

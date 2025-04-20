@@ -1,5 +1,5 @@
 # YOLO VALUES
-YOLOMODELPATH = 'AIMA_model.pt' # YOLO 모델 경로
+YOLOMODELPATH = 'YIM_model.pt' # YOLO 모델 경로
 YOLOCONFIDENCE = 0.59 # YOLO 모델 신뢰도 (default: 0.59)
 
 # LOG VALUES

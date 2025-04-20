@@ -15,6 +15,7 @@ from utils.settings import BASEIMGDIR, CLIPTHRESHOLD
 
 # CLIP 모델 로드
 device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Using device: {device}")
 model, preprocess = clip.load("ViT-B/32", device=device)
 
 def extract_features_clip(image) -> np.ndarray:
