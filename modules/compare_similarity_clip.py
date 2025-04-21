@@ -90,14 +90,14 @@ def compare_data_lists_clip(storage_list: List[Dict],
     - added 후보는 temp_data와 비교하여 유사한 항목이 있으면 nickname을 가져옴
 
     Args:
-        storage_list (list): 현재 저장소 상태 리스트 (dict 포함). 각 dict는 'image', 'x', 'y', 'id', 'nickname' 등 포함
-        new_data_list (list): 새로 감지된 객체 정보 리스트 (dict 포함). 각 dict는 'image', 'x', 'y', 'nickname' 등 포함
-        temp_data_list (list, optional): 임시 저장소 데이터 리스트 (dict 포함). 각 dict는 'image', 'nickname', 'id' 등 포함
+        storage_list (list): 현재 저장소 상태 리스트 (dict 포함). 각 dict는 'uuid', 'x', 'y', 'nickname' 등 포함
+        new_data_list (list): 새로 감지된 객체 정보 리스트 (dict 포함). 각 dict는 'uuid', 'x', 'y', 'nickname' 등 포함
+        temp_data_list (list, optional): 임시 저장소 데이터 리스트 (dict 포함). 각 dict는 'uuid', 'nickname' 등 포함
         threshold (float): 유사도 임계값 (이 값 이상이면 동일 항목으로 간주)
 
     Returns:
         tuple: (added, removed, moved) 딕셔너리 튜플.
-               키는 각 항목의 'image' 식별자를 사용합니다.
+               키는 각 항목의 'uuid' 식별자를 사용합니다.
                added 항목은 temp에서 가져온 nickname을 포함할 수 있습니다.
     """
     added = {}
@@ -114,7 +114,7 @@ def compare_data_lists_clip(storage_list: List[Dict],
     def extract_features_safe(item_list, path):
         features = {}
         for item in item_list:
-            img_name = item.get('image')
+            img_name = item.get('uuid')
             if not img_name: continue
             img_path = os.path.join(path, img_name)
             if os.path.exists(img_path):
@@ -158,8 +158,8 @@ def compare_data_lists_clip(storage_list: List[Dict],
             matched_storage_keys.add(best_match_storage_key)
             matched_new_data_keys.add(new_key)
 
-            storage_match_item = next((item for item in storage_list if item.get('image') == best_match_storage_key), None)
-            new_item_full = next((item for item in new_data_list if item.get('image') == new_key), None)
+            storage_match_item = next((item for item in storage_list if item.get('uuid') == best_match_storage_key), None)
+            new_item_full = next((item for item in new_data_list if item.get('uuid') == new_key), None)
 
             if storage_match_item and new_item_full:
                 storage_x = storage_match_item.get('x')
@@ -175,8 +175,8 @@ def compare_data_lists_clip(storage_list: List[Dict],
 
                 if is_moved:
                     moved[new_key] = {
-                        "previous": {"x": storage_x, "y": storage_y, "image": storage_match_item['image']},
-                        "current": {"x": new_x, "y": new_y, "image": new_item_full['image']},
+                        "previous": {"x": storage_x, "y": storage_y, "uuid": storage_match_item['uuid']},
+                        "current": {"x": new_x, "y": new_y, "uuid": new_item_full['uuid']},
                         "nickname": storage_nickname,
                         "similarity": float(max_similarity)
                     }
@@ -188,7 +188,7 @@ def compare_data_lists_clip(storage_list: List[Dict],
 
     for new_key, new_feature in new_data_features.items():
         if new_key not in matched_new_data_keys:
-            new_item_full = next((item for item in new_data_list if item.get('image') == new_key), None)
+            new_item_full = next((item for item in new_data_list if item.get('uuid') == new_key), None)
             if not new_item_full: continue
 
             found_temp_nickname = None
@@ -201,7 +201,7 @@ def compare_data_lists_clip(storage_list: List[Dict],
                     if similarity > max_temp_similarity:
                         max_temp_similarity = similarity
                         if similarity >= threshold:
-                            temp_match_item = next((item for item in temp_data_list if item.get('image') == temp_key), None)
+                            temp_match_item = next((item for item in temp_data_list if item.get('uuid') == temp_key), None)
                             if temp_match_item:
                                 found_temp_nickname = temp_match_item.get('nickname')
                                 # temp의 이미지 삭제
@@ -209,7 +209,7 @@ def compare_data_lists_clip(storage_list: List[Dict],
                                 if os.path.isfile(file_path) or os.path.islink(file_path):
                                     os.unlink(file_path)
                                 # db에서 해당 항목 삭제
-                                delete_temp(temp_match_item['id'])
+                                delete_temp(temp_match_item['uuid'])
                                 
                                 # print(f"Found similar item in temp for {new_key} (Sim: {similarity:.4f}). Using nickname: {found_temp_nickname}") # 디버깅용
 
@@ -224,7 +224,7 @@ def compare_data_lists_clip(storage_list: List[Dict],
 
     for storage_key, storage_feature in storage_features.items():
         if storage_key not in matched_storage_keys:
-            storage_item_full = next((item for item in storage_list if item.get('image') == storage_key), None)
+            storage_item_full = next((item for item in storage_list if item.get('uuid') == storage_key), None)
             if storage_item_full:
                 removed[storage_key] = storage_item_full
 

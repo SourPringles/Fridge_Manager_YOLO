@@ -12,7 +12,7 @@ def load_temp():
             conn.row_factory = sqlite3.Row # 결과를 딕셔너리처럼 접근 가능하게 설정
             cursor = conn.cursor()
             # 테이블 이름 수정: tempV2 -> temp
-            cursor.execute('SELECT id, image, timestamp, nickname FROM temp')
+            cursor.execute('SELECT uuid, timestamp, nickname FROM temp')
             rows = cursor.fetchall()
             # row_factory 사용 시 더 간결하게 변환 가능
             for row in rows:
@@ -31,11 +31,10 @@ def update_temp(data):
             cursor = conn.cursor()
             # 테이블 이름 수정: tempV2 -> temp
             # 함수 시그니처 변경: 개별 인자 -> data 딕셔너리
-            # SQL 수정: ID 자동 증가, 플레이스홀더 및 값 개수 일치
             cursor.execute('''
-                INSERT OR REPLACE INTO temp (image, timestamp, nickname)
+                INSERT OR REPLACE INTO temp (uuid, timestamp, nickname)
                 VALUES (?, ?, ?)
-            ''', (data["image"], data["timestamp"], data["nickname"]))
+            ''', (data["uuid"], data["timestamp"], data["nickname"]))
             conn.commit()
     except sqlite3.Error as e:
         print(f"Error updating temp: {e}")
@@ -43,7 +42,7 @@ def update_temp(data):
         print(f"Error updating temp: Missing key {e} in data")
 
 
-def delete_temp(item_id):
+def delete_temp(uuid):
     """
     데이터베이스(temp)에서 ID로 항목 삭제
     """
@@ -52,7 +51,7 @@ def delete_temp(item_id):
         with _get_connection() as conn:
             cursor = conn.cursor()
             # 테이블 이름은 이미 'temp'로 올바름
-            cursor.execute('DELETE FROM temp WHERE id = ?', (item_id,)) # 변수명 id -> item_id (명확성)
+            cursor.execute('DELETE FROM temp WHERE uuid = ?', (uuid,)) # 변수명 id -> item_id (명확성)
             conn.commit()
     except sqlite3.Error as e:
-        print(f"Error deleting temp item with id {item_id}: {e}")
+        print(f"Error deleting temp item with id {uuid}: {e}")

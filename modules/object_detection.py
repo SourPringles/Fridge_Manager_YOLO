@@ -48,7 +48,7 @@ def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDEN
         thumbnail.save(save_path)
 
         object_info = {
-            "image": f"{filename}",  # 이미지 이름 (고유 UUID)
+            "uuid": f"{filename}",  # 이미지 이름 (고유 UUID)
             "nickname": "NEW ITEM",
             "x": round((x1 + x2) / 2), 
             "y": round((y1 + y2) / 2),

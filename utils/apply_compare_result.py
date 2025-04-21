@@ -43,8 +43,8 @@ def apply_compare_result(added, removed, moved, storage_data):
             update_storage(item_data)
 
             # 업데이트 후 이미지 이동
-            src_img = os.path.join(new_img_path, item_data['image'])
-            dst_img = os.path.join(storage_img_path, item_data['image'])
+            src_img = os.path.join(new_img_path, item_data['uuid'])
+            dst_img = os.path.join(storage_img_path, item_data['uuid'])
             if os.path.exists(src_img):
                 shutil.move(src_img, dst_img)
             else:
@@ -58,21 +58,21 @@ def apply_compare_result(added, removed, moved, storage_data):
 
     for item_key, move_info in moved.items():
         try:
-            previous_image_name = move_info['previous']['image']
+            previous_image_name = move_info['previous']['uuid']
             current_data = move_info['current']
-            current_image_name = current_data['image']
+            current_image_name = current_data['uuid']
 
             # 이동된 항목의 이전 ID를 찾고 이미지 변경
-            previous_item_id = None
+            previous_item_uuid = None
             for item in storage_data:
-                if item['image'] == previous_image_name:
-                    previous_item_id = item['id']
+                if item['uuid'] == previous_image_name:
+                    previous_item_uuid = item['uuid']
                     break
             
-            if previous_item_id is not None:
-                delete_storage(previous_item_id)
+            if previous_item_uuid is not None:
+                delete_storage(previous_item_uuid)
             else:
-                 print(f"Warning: Could not find previous item ID for moved item (image: {previous_image_name})")
+                 print(f"Warning: Could not find previous item UUID for moved item (uuid: {previous_image_name})")
 
             # 이동된 항목의 nickname 정보 반영 및 timestamp 갱신
             current_data['nickname'] = move_info.get('nickname', 'MOVED ITEM')
@@ -104,11 +104,11 @@ def apply_compare_result(added, removed, moved, storage_data):
 
     for item_key, item_data in removed.items():
         try:
-            item_id = item_data['id']
-            image_name = item_data['image']
-            delete_storage(item_id)
+            item_uuid = item_data['uuid']
+            image_name = item_data['uuid']
+            delete_storage(item_uuid)
             temp_item = {
-                "image": image_name,
+                "uuid": image_name,
                 "timestamp": current_timestamp,
                 "nickname": item_data.get('nickname', 'REMOVED ITEM')
             }

@@ -46,12 +46,12 @@ def check_temp():
                 # 3시간(10800초) 이상인 경우 삭제
                 if time_difference_seconds > TIMEOUTVALUE:
                     delete_temp(data['id'])
-                    img_path = os.path.join("./db/imgs/temp/", data['image']) # os.path.join 사용 권장
+                    img_path = os.path.join("./db/imgs/temp/", data['uuid']) # os.path.join 사용 권장
                     if os.path.exists(img_path):
                         os.remove(img_path)
-                        print(f"--삭제된 temp 항목 ID: {data['id']}, 이미지: {data['image']}--")
+                        print(f"--삭제된 temp 항목 uuid: {data['uuid']}, 이미지: {data['uuid']}--")
                     else:
-                        print(f"--삭제된 temp 항목 ID: {data['id']}, 이미지 파일 없음: {img_path}--")
+                        print(f"--삭제된 temp 항목 uuid: {data['uuid']}, 이미지 파일 없음: {img_path}--")
                 #else:
                 #    print(f"유효한 temp 항목 ID: {data['id']}")
             except ValueError as e:

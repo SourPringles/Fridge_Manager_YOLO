@@ -65,7 +65,7 @@ def updateStorage():
     (list)
     input_data = {
             #"id": i,
-            "image": "uuid",  # 잘라낸 각 객체의 이미지
+            "uuid": "uuid",  # 잘라낸 각 객체의 이미지
             "nickname": "NEW ITEM",
             "x": round((x1 + x2) / 2), 
             "y": round((y1 + y2) / 2),

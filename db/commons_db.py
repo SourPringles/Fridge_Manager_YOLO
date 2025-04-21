@@ -16,8 +16,7 @@ def _create_tables(cursor):
     """storage 및 temp 테이블을 생성합니다 (존재하지 않는 경우)."""
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS storage (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            image TEXT,
+            uuid TEXT PRIMARY KEY,
             x INTEGER,
             y INTEGER,
             timestamp TEXT,
@@ -26,8 +25,7 @@ def _create_tables(cursor):
     ''')
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS temp (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            image TEXT,
+            uuid TEXT PRIMARY KEY,
             timestamp TEXT,
             nickname TEXT
         )
