@@ -5,9 +5,9 @@
 
 Working Environments: Python 3.9.13 with Flask
 
-YOLOv8 Custom Model Project: [Roboflow Link](https://universe.roboflow.com/test-rphja/aima_model)
+YOLOv8 Custom Model Project: [Roboflow Link](https://app.roboflow.com/yim-lkqay/yim_model/models)
     
-Demo Application: [Github](https://github.com/SourPringles/AIMA_Demo)
+Demo Application: [Github](https://github.com/SourPringles/YIM_Demo)
 
 Set Python Environments into .venv Folder 
 
