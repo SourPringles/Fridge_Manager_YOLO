@@ -7,6 +7,7 @@ import torch
 import numpy as np
 from PIL import Image
 import clip
+#import time
 
 # Custom Modules
 from db import delete_temp

@@ -9,13 +9,13 @@ from utils import register_blueprints_sub, init_scheduler, init_folders
 from db import init_db
 
 
-AIMA = Flask(__name__)
+YIM = Flask(__name__)
 
 # Initialize the scheduler
-init_scheduler(AIMA)
+init_scheduler(YIM)
 
 # API Specification
-@AIMA.route('/')
+@YIM.route('/')
 def index():
     return render_template('apispec.html')
 
@@ -26,8 +26,8 @@ init_db()
 init_folders()
 
 # Register blueprints
-register_blueprints_main(AIMA)
-register_blueprints_sub(AIMA)
+register_blueprints_main(YIM)
+register_blueprints_sub(YIM)
 
 if __name__ == '__main__':
-    AIMA.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)
+    YIM.run(host='0.0.0.0', port=5000, debug=True, use_reloader=False)

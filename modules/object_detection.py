@@ -6,6 +6,7 @@ from datetime import datetime
 
 # Libraries
 from ultralytics import YOLO
+import cv2
 
 # Custom Modules
 from modules import crop_object
@@ -23,7 +24,7 @@ def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDEN
     model = YOLO(model_path)
     
     results = model(image, conf=confidence)
-    #plotted_image = results[0].plot()
+    plotted_image = results[0].plot()
 
     objects = []
     base_dir = BASEIMGDIR
@@ -61,7 +62,7 @@ def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDEN
         #print(f"Object {i+1}: {object_info['nickname']}, x: {object_info['x']}, y: {object_info['y']}, timestamp: {object_info['timestamp']}")
 
     # debug 
-    #cv2.imwrite(f"{img_dir}/result.jpg", plotted_image)
+    cv2.imwrite(f"result.jpg", plotted_image)
     #objects.append(save_timestamp)
 
     return objects
