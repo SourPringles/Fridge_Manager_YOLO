@@ -12,7 +12,7 @@ from db import init_db
 YIM = Flask(__name__)
 
 # Initialize the scheduler
-# init_scheduler(YIM)
+init_scheduler(YIM)
 
 # API Specification
 @YIM.route('/')
