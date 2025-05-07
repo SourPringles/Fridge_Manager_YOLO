@@ -5,7 +5,6 @@ import os
 from flask import Blueprint, jsonify, send_from_directory
 
 # Custom Modules
-from db import load_storage
 from utils.settings import BASEIMGDIR
 
 getImage_bp = Blueprint('getImage', __name__)
@@ -18,7 +17,7 @@ def get_image(uid):
     지원하는 확장자: .jpg, .jpeg, .png, .gif
     """
     try:
-        image_folder = os.path.join(BASEIMGDIR, "storage")  # 이미지 저장 경로
+        image_folder = os.path.join(BASEIMGDIR, "storage")  # 이미지 경로
 
         if not os.path.isdir(image_folder):
             return jsonify({"error": "Image folder not configured or does not exist."}), 500
