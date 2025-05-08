@@ -8,6 +8,7 @@ from flask import Blueprint, jsonify, send_from_directory
 from utils.settings import BASEIMGDIR
 
 getImage_bp = Blueprint('getImage', __name__)
+getBackground_bp = Blueprint('getBackground', __name__)
 # getAllImage_bp = Blueprint('getAllImage', __name__)
 
 @getImage_bp.route('/getImage/<uid>', methods=['GET'])
@@ -23,6 +24,28 @@ def get_image(uid):
             return jsonify({"error": "Image folder not configured or does not exist."}), 500
 
         filename = f"{uid}"
+        file_path = os.path.join(image_folder, filename)
+        if os.path.exists(file_path):
+            return send_from_directory(image_folder, filename)
+        
+        return jsonify({"error": "Image not found."}), 404
+
+    except Exception as e:
+        # 로깅을 추가하는 것이 좋습니다. 예: current_app.logger.error(f"Error getting image: {e}")
+        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
+    
+@getBackground_bp.route('/getBackground', methods=['GET'])
+def get_image():
+    """
+    입력 이미지 파일 반환
+    """
+    try:
+        image_folder = BASEIMGDIR  # 이미지 경로
+
+        if not os.path.isdir(image_folder):
+            return jsonify({"error": "Image folder not configured or does not exist."}), 500
+
+        filename = "curr.jpg"
         file_path = os.path.join(image_folder, filename)
         if os.path.exists(file_path):
             return send_from_directory(image_folder, filename)

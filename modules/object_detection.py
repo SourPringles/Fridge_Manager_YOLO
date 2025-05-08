@@ -38,6 +38,8 @@ def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDEN
     else:
         os.makedirs(img_dir)
 
+    cv2.imwrite(f"{base_dir}/curr.jpg", image)
+
     for i, det in enumerate(results[0].boxes):
         x1, y1, x2, y2 = map(int, det.xyxy[0])
         #confidence = det.conf[0].item()
