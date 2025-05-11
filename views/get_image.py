@@ -31,7 +31,6 @@ def get_image(uid):
         return jsonify({"error": "Image not found."}), 404
 
     except Exception as e:
-        # 로깅을 추가하는 것이 좋습니다. 예: current_app.logger.error(f"Error getting image: {e}")
         return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
     
 @getBackground_bp.route('/getBackground', methods=['GET'])
@@ -53,5 +52,4 @@ def get_image():
         return jsonify({"error": "Image not found."}), 404
 
     except Exception as e:
-        # 로깅을 추가하는 것이 좋습니다. 예: current_app.logger.error(f"Error getting image: {e}")
         return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
