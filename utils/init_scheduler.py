@@ -45,7 +45,7 @@ def check_temp():
 
                 # 3시간(10800초) 이상인 경우 삭제
                 if time_difference_seconds > TIMEOUTVALUE:
-                    delete_temp(data['id'])
+                    delete_temp(data['uuid'])
                     img_path = os.path.join("./db/imgs/temp/", data['uuid']) # os.path.join 사용 권장
                     if os.path.exists(img_path):
                         os.remove(img_path)
@@ -56,9 +56,9 @@ def check_temp():
                 #    print(f"유효한 temp 항목 ID: {data['id']}")
             except ValueError as e:
                 # 파싱 오류 발생 시 로그 출력
-                print(f"Error parsing timestamp for temp item {data.get('id', 'N/A')}: {e}. Original string: '{data['timestamp']}'")
+                print(f"Error parsing timestamp for temp item {data.get('uuid', 'N/A')}: {e}. Original string: '{data['timestamp']}'")
             except Exception as e:
-                print(f"Error processing temp item {data.get('id', 'N/A')}: {e}")
+                print(f"Error processing temp item {data.get('uuid', 'N/A')}: {e}")
     except Exception as e:
         print(f"Error loading or processing temp data: {e}")
 
