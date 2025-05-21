@@ -78,8 +78,8 @@ def updateStorage():
 
 # ---저장소 비교 시작---
 
-    # --만약 이전 저장소가 없다면: input_data를 storage에 추가
-    if not storage_data:
+    # --만약 이전 저장소가 없다면 and Temp가 비었다면: input_data를 storage에 추가
+    if not storage_data and not temp_data:
 
         # db에 저장
         for data in input_data:

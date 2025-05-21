@@ -7,10 +7,10 @@ from flask import Blueprint, jsonify
 from db import load_storage, update_storage
 
 
-rename_bp = Blueprint('rename', __name__)
+updateNickname_bp = Blueprint('updateNickname', __name__)
 
-@rename_bp.route('/rename/<uid>/<new_name>', methods=['GET'])
-def rename(uid, new_name):
+@updateNickname_bp.route('/updateNickname/<uid>/<new_name>', methods=['GET'])
+def update_nickname(uid, new_name):
     """
     별명 변경 엔드포인트
     """
