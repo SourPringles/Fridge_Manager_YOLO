@@ -9,7 +9,7 @@ from db import load_storage, update_storage
 
 rename_bp = Blueprint('rename', __name__)
 
-@rename_bp.route('/rename/<uid>/<new_name>', methods=['POST'])
+@rename_bp.route('/rename/<uid>/<new_name>', methods=['GET'])
 def rename(uid, new_name):
     """
     별명 변경 엔드포인트

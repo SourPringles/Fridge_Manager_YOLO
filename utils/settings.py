@@ -14,6 +14,7 @@ CLIPTHRESHOLD = 0.85 # clip 모델 유사도 기준 (default: 0.85)
 
 # BASE IMG DIRS
 BASEIMGDIR = ".\db\imgs" # 기본 이미지 저장 경로 (default: ./db/imgs)
+DEFAULTIMGDIR = ".\src" # 기본 이미지 저장 경로 (default: ./src)
 #BASEIMGDIRNEW = "./db/imgs/new" # 새로운 이미지 저장 경로 (default: ./db/imgs/new)
 #BASEIMGDIRSTORAGE = "./db/imgs/storage" # 저장된 이미지 경로 (default: ./db/imgs/storage)
 #BASEIMGDIRTEMP = "./db/imgs/temp" # 임시 이미지 저장 경로 (default: ./db/imgs/temp)

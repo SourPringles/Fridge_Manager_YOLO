@@ -27,6 +27,13 @@ def reset_storage():
 
     storage = load_storage()
     temp = load_temp()
+    
+    try :
+        shutil.rmtree(base_dir)
+    except :
+        pass
+    
+    os.mkdir(base_dir)
 
     for folder in folders:
         _reset_work(folder)

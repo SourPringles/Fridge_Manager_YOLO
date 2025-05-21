@@ -2,7 +2,7 @@
 from .init_scheduler import init_scheduler
 
 # Blueprints
-from .update_nickname import rename_bp
+from .rename import rename_bp
 from .reset_all import reset_bp
 from .test_connection import connectionTest_bp
 

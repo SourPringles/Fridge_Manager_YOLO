@@ -1,7 +1,5 @@
 # Blueprints
-from .get_storage import getStorage_bp
-from .get_temp import getTemp_bp
-from .get_all import getAll_bp
+from .get_items import getStorage_bp, getTemp_bp, getAll_bp
 from .update_storage import updateStorage_bp
 from .get_image import getImage_bp, getBackground_bp
 
