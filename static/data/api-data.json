@@ -14,38 +14,36 @@
             }
         },
         {
-            "id": "getTemp",
+            "id": "getStorage",
             "method": "GET",
-            "path": "/getTemp",
-            "title": "임시반출목록 반환",
-            "description": "현재 임시반출 상태인 아이템 목록을 반환합니다.",
+            "path": "/getStorage",
+            "title": "저장소 목록 반환",
+            "description": "현재 저장된 아이템 목록을 반환합니다.",
             "response": {
-                "id": "id -> auto increment",
-                "image": "이미지 uid",
-                "nickname": "별명",
-                "timestamp": "타임스탬프"
+                "uuid": "uuid",
+                "x": "x좌표",
+                "y": "y좌표",
+                "timestamp": "타임스탬프",
+                "nickname": "별명"
             },
             "example": {
-                "request": "GET /getTemp HTTP/1.1\nHost: example.com",
+                "request": "GET /getStorage HTTP/1.1\nHost: example.com",
                 "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n[ \n    {\n        \"id\": 1,\n        \"image\": \"c2e1f4c6-4b5f-48ee-9230-a7d2dbfbc644.jpg\",\n        \"nickname\": \"NEW ITEM\",\n        \"timestamp\": \"2025-04-17 10:02:24\"\n    }\n]"
             }
         },
         {
-            "id": "getStorage",
+            "id": "getTemp",
             "method": "GET",
-            "path": "/getStorage",
-            "title": "재고목록 반환",
-            "description": "현재 보관 중인 모든 아이템 목록을 반환합니다.",
+            "path": "/getTemp",
+            "title": "임시저장소 반환",
+            "description": "임시저장소 목록을 반환합니다.",
             "response": {
-                "id": "id -> auto increment",
-                "image": "이미지 uid",
-                "nickname": "별명",
+                "uuid": "uuid",
                 "timestamp": "타임스탬프",
-                "x": "x좌표",
-                "y": "y좌표"
+                "nickname": "별명"
             },
             "example": {
-                "request": "GET /getStorage HTTP/1.1\nHost: example.com",
+                "request": "GET /getTemp HTTP/1.1\nHost: example.com",
                 "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n[ \n    {\n        \"id\": 1,\n        \"image\": \"c2e1f4c6-4b5f-48ee-9230-a7d2dbfbc644.jpg\",\n        \"nickname\": \"NEW ITEM\",\n        \"x\": \"192\",\n        \"y\": \"250\",\n        \"timestamp\": \"2025-04-17 10:02:24\"\n    }\n]"
             }
         },
@@ -58,20 +56,18 @@
             "response": {
                 "storage": [
                     {
-                        "id": "id -> auto increment",
-                        "image": "이미지 uid",
-                        "nickname": "별명",
-                        "timestamp": "타임스탬프",
+                        "uuid": "uuid",
                         "x": "x좌표",
-                        "y": "y좌표"
+                        "y": "y좌표",
+                        "timestamp": "타임스탬프",
+                        "nickname": "별명"
                     }
                 ],
                 "temp": [
                     {
-                        "id": "id -> auto increment",
-                        "image": "이미지 uid",
-                        "nickname": "별명",
-                        "timestamp": "타임스탬프"
+                        "uuid": "uuid",
+                        "timestamp": "타임스탬프",
+                        "nickname": "별명"
                     }
                 ]
             },
@@ -97,6 +93,37 @@
             }
         },
         {
+            "id": "updateNickname",
+            "method": "GET",
+            "path": "/updateNickname/<uuid>/<new_name>**",
+            "title": "아이템 별명 변경",
+            "description": "UUID로 식별된 아이템의 별명을 변경합니다.",
+            "request": [
+                {
+                    "name": "uuid",
+                    "type": "string",
+                    "required": true,
+                    "path": true,
+                    "description": "변경할 아이템의 UUID"
+                },
+                {
+                    "name": "new_name",
+                    "type": "string",
+                    "required": true,
+                    "path": true,
+                    "description": "설정할 새 별명"
+                }
+            ],
+            "response": {
+                "message": "Nickname updated successfully.",
+                "inventory": "// 업데이트된 전체 인벤토리"
+            },
+            "example": {
+                "request": "GET /updateNickname/sahk-awe-sawe.jpg/반찬1 HTTP/1.1\nHost: example.com",
+                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"message\": \"Nickname updated successfully.\",\n  \"inventory\": {\n    \"storage\": {\n      \"QR12345\": {\n        \"nickname\": \"새노트북\",\n        \"x\": 120,\n        \"y\": 200,\n        \"lastChecked\": \"2023-11-05 09:30:00\",\n        \"qr_code\": \"QR12345\"\n      }\n    },\n    \"temp\": {}\n  }\n}"
+            }
+        },
+        {
             "id": "updateStorage",
             "method": "POST",
             "path": "/updateStorage",
@@ -118,37 +145,6 @@
             "example": {
                 "request": "POST /updateStorage HTTP/1.1\nHost: example.com\nContent-Type: multipart/form-data;",
                 "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"added\": 1,\n  \"moved\": 10,\n  \"removed\": 1\n}"
-            }
-        },
-        {
-            "id": "rename",
-            "method": "POST",
-            "path": "/rename/<qr_code>/<new_name>**",
-            "title": "아이템 별명 변경",
-            "description": "QR 코드로 식별된 아이템의 별명을 변경합니다.",
-            "request": [
-                {
-                    "name": "qr_code",
-                    "type": "string",
-                    "required": true,
-                    "path": true,
-                    "description": "변경할 아이템의 QR 코드"
-                },
-                {
-                    "name": "new_name",
-                    "type": "string",
-                    "required": true,
-                    "path": true,
-                    "description": "설정할 새 별명"
-                }
-            ],
-            "response": {
-                "message": "Nickname updated successfully.",
-                "inventory": "// 업데이트된 전체 인벤토리"
-            },
-            "example": {
-                "request": "POST /rename/QR12345/새노트북 HTTP/1.1\nHost: example.com",
-                "response": "HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\n  \"message\": \"Nickname updated successfully.\",\n  \"inventory\": {\n    \"storage\": {\n      \"QR12345\": {\n        \"nickname\": \"새노트북\",\n        \"x\": 120,\n        \"y\": 200,\n        \"lastChecked\": \"2023-11-05 09:30:00\",\n        \"qr_code\": \"QR12345\"\n      }\n    },\n    \"temp\": {}\n  }\n}"
             }
         }
     ]

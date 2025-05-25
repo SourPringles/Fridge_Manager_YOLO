@@ -17,7 +17,7 @@ scheduler = APScheduler()
 class SchedulerConfig:
     SCHEDULER_API_ENABLED = True
 
-@scheduler.task('interval', id='check_temp', seconds=60*30, misfire_grace_time=900)
+@scheduler.task('interval', id='check_temp', seconds=60*10, misfire_grace_time=900)
 def check_temp():
     """
     30분마다 실행
