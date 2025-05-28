@@ -64,9 +64,12 @@ def apply_compare_result(added, removed, moved, storage_data):
 
             # 이동된 항목의 이전 ID를 찾고 이미지 변경
             previous_item_uuid = None
+            previous_timstamp = None
+
             for item in storage_data:
                 if item['uuid'] == previous_image_name:
                     previous_item_uuid = item['uuid']
+                    previous_timstamp = item.get('timestamp')
                     break
             
             if previous_item_uuid is not None:
@@ -76,7 +79,7 @@ def apply_compare_result(added, removed, moved, storage_data):
 
             # 이동된 항목의 nickname 정보 반영 및 timestamp 갱신
             current_data['nickname'] = move_info.get('nickname', 'MOVED ITEM')
-            current_data['timestamp'] = current_timestamp
+            current_data['timestamp'] = previous_timstamp
 
             update_storage(current_data)
 
