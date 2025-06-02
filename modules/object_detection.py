@@ -64,7 +64,7 @@ def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDEN
         #print(f"Object {i+1}: {object_info['nickname']}, x: {object_info['x']}, y: {object_info['y']}, timestamp: {object_info['timestamp']}")
 
     # debug 
-    cv2.imwrite(f"result.jpg", plotted_image)
-    #objects.append(save_timestamp)
+    # cv2.imwrite(f"result.jpg", plotted_image)
+    # objects.append(save_timestamp)
 
     return objects
