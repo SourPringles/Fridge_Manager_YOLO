@@ -9,7 +9,7 @@ from ultralytics import YOLO
 import cv2
 
 # Custom Modules
-from modules import crop_object, enhance_image_quality, generate_food_name
+from modules import crop_object, enhance_image_quality
 from utils.settings import BASEIMGDIR, YOLOMODELPATH, YOLOCONFIDENCE
 
 
