@@ -7,9 +7,11 @@ from datetime import datetime
 # Libraries
 from ultralytics import YOLO
 import cv2
+import PIL
+import numpy as np
 
 # Custom Modules
-from modules import crop_object, enhance_image_quality
+from modules import crop_object, enhance_image_quality_consistent, generate_food_name
 from utils.settings import BASEIMGDIR, YOLOMODELPATH, YOLOCONFIDENCE
 
 
@@ -39,7 +41,7 @@ def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDEN
         os.makedirs(img_dir)
 
     # cv2.imwrite(f"{base_dir}/curr.jpg", image)
-    save_compressed_image(image, f"{base_dir}/curr.jpg", 100)
+    save_compressed_image(image, f"{base_dir}/curr.jpg", 50)
 
     for i, det in enumerate(results[0].boxes):
         x1, y1, x2, y2 = map(int, det.xyxy[0])
@@ -47,13 +49,18 @@ def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDEN
         #confidence = det.conf[0].item()
         thumbnail = crop_object(image, (x1, y1, x2, y2))
 
+        #nickname = generate_food_name(thumbnail)
+
         # 이미지 초해상화
-        enhanced_thumbnail = enhance_image_quality(thumbnail)
+        # enhanced_thumbnail = enhance_image_quality(thumbnail)
+        enhanced_thumbnail = enhance_image_quality_consistent(thumbnail)
+
+        nickname = generate_food_name(enhanced_thumbnail)
 
         filename = f"{uuid.uuid4()}.jpg"
         save_path = os.path.join(img_dir, filename)
 
-        enhanced_thumbnail.save(save_path)
+        enhanced_thumbnail.save(save_path, format='JPEG', quality=50)
         # 별명 생성
         # nickname = generate_food_name(save_path)
 
@@ -77,7 +84,7 @@ def detect_objects_yolo(image, model_path=YOLOMODELPATH, confidence=YOLOCONFIDEN
     return objects
 
 # 이미지 압축률 조정 (0-100, 낮을수록 더 많이 압축)
-def save_compressed_image(image, file_path, max_size_kb=100):
+def save_compressed_image(image, file_path, max_size_kb=50):
     # 초기 압축 품질
     quality = 90
     min_quality = 5  # 최소 품질 한계
@@ -109,7 +116,7 @@ def save_compressed_image(image, file_path, max_size_kb=100):
     return False
 
 # 해상도 축소 + 압축
-def resize_and_compress_image(image, file_path, max_size_kb=100):
+def resize_and_compress_image(image, file_path, max_size_kb=50):
     height, width = image.shape[:2]
     scale = 0.9  # 초기 축소 비율
     min_scale = 0.3  # 최소 축소 비율
@@ -138,3 +145,32 @@ def resize_and_compress_image(image, file_path, max_size_kb=100):
     
     print(f"모든 시도 후에도 목표 크기({max_size_kb}KB)를 달성하지 못했습니다.")
     return False
+
+    """일관된 초해상화 결과를 생성하는 함수
+    
+    Args:
+        thumbnail: 입력 이미지
+        target_size: CLIP 모델에 최적화된 크기 (기본 224x224)
+    
+    Returns:
+        일관된 크기와 품질로 향상된 이미지
+    """
+    # 1. 먼저 이미지를 일관된 크기로 리사이징
+    if isinstance(thumbnail, PIL.Image.Image):
+        resized_img = thumbnail.resize(target_size, PIL.Image.LANCZOS)
+        # PIL 이미지를 numpy 배열로 변환
+        img_array = np.array(resized_img)
+    else:
+        # OpenCV 이미지라면 직접 리사이징
+        img_array = cv2.resize(thumbnail, target_size, interpolation=cv2.INTER_LANCZOS4)
+        
+    # 2. 초해상화 적용 (특정 알고리즘으로 고정)
+    # 예: 간단한 샤프닝 필터 적용 (일관된 결과를 위해)
+    kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
+    enhanced = cv2.filter2D(img_array, -1, kernel)
+    
+    # 3. 색상 정규화 (CLIP 모델 입력에 맞춤)
+    enhanced = cv2.normalize(enhanced, None, 0, 255, cv2.NORM_MINMAX)
+    
+    # PIL 이미지로 변환하여 반환
+    return PIL.Image.fromarray(enhanced)

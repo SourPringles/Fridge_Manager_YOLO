@@ -10,7 +10,7 @@ LOGPATH = ".\logs" # 로그 파일 경로 (default: ./logs)
 TIMEOUTVALUE = 10800 # temp 테이블에서 삭제할 시간 (default: 10800초/3시간)
 
 # CLIP VALUES
-CLIPTHRESHOLD = 0.85 # clip 모델 유사도 기준 (default: 0.85)
+CLIPTHRESHOLD = 0.5 # clip 모델 유사도 기준 (default: 0.85)
 
 # BASE IMG DIRS
 BASEIMGDIR = ".\db\imgs" # 기본 이미지 저장 경로 (default: ./db/imgs)

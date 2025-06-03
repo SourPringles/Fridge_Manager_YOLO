@@ -2,7 +2,7 @@
 import os
 
 # Library
-from flask import Blueprint, jsonify, send_from_directory
+from flask import Blueprint, jsonify, send_file
 
 # Custom Modules
 from utils.settings import BASEIMGDIR, DEFAULTIMGDIR
@@ -26,7 +26,7 @@ def get_image(uid):
         filename = f"{uid}"
         file_path = os.path.join(image_folder, filename)
         if os.path.exists(file_path):
-            return send_from_directory(image_folder, filename)
+            return send_file(file_path, mimetype='image/jpeg')
         
         return jsonify({"error": "Image not found."}), 404
 
@@ -47,9 +47,10 @@ def get_backdroundimage():
         filename = "curr.jpg"
         file_path = os.path.join(image_folder, filename)
         if os.path.exists(file_path):
-            return send_from_directory(image_folder, filename)
+            return send_file(file_path, mimetype='image/jpeg')
         
-        return send_from_directory(DEFAULTIMGDIR, "default.jpg")
+        default_path = os.path.join(DEFAULTIMGDIR, "default.jpg")
+        return send_file(default_path, mimetype='image/jpeg')
 
     except Exception as e:
         return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
