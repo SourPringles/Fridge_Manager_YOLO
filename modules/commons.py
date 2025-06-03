@@ -3,7 +3,6 @@
 # Libraries
 from PIL import Image
 import cv2
-
 # Custom Modules
 
 
@@ -26,3 +25,105 @@ def crop_object(image, bbox):
 
     cropped = pil_image.crop(bbox)
     return cropped
+
+def enhance_image_quality(image, outscale=4):
+    """
+    생성형 AI를 활용한 초해상화 (최신 huggingface_hub API 사용)
+    
+    Args:
+        image: PIL 이미지
+        outscale: 출력 이미지의 스케일 배율 (기본값: 4)
+    
+    Returns:
+        PIL.Image: 향상된 이미지
+    """
+    try:
+        import torch
+        from PIL import Image
+        
+        # 이미지 크기 확인
+        if image.width * image.height > 1024 * 1024:
+            # 큰 이미지의 경우 기본 방식으로 처리
+            return image.resize((int(image.width * outscale), int(image.height * outscale)), Image.LANCZOS)
+        
+        # 디바이스 선택
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        
+        # 모델 로드 (처음 실행 시 다운로드됨)
+        if not hasattr(enhance_image_quality, 'model_loaded'):
+            try:
+                import diffusers
+                from diffusers import StableDiffusionUpscalePipeline
+                
+                # huggingface_hub 최신 버전 대응
+                enhance_image_quality.model = StableDiffusionUpscalePipeline.from_pretrained(
+                    "stabilityai/stable-diffusion-x4-upscaler", 
+                    torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+                    use_auth_token=False,  # 인증 토큰 필요 없음
+                    revision="fp16" if torch.cuda.is_available() else "main"
+                )
+                # VAE scaling_factor 수정
+                enhance_image_quality.model.vae.config.scaling_factor = 0.08333
+                enhance_image_quality.model = enhance_image_quality.model.to(device)
+                enhance_image_quality.model_loaded = True
+                print("초해상화 AI 모델 로드 완료")
+            except Exception as e:
+                print(f"AI 모델 로드 실패: {e}")
+                # 모델 로드 실패 시 기본 방식으로 대체
+                return image.resize((int(image.width * outscale), int(image.height * outscale)), Image.LANCZOS)
+        
+        # 이미지 크기가 지원 범위인지 확인하고 조정
+        if image.width > 512 or image.height > 512:
+            # 모델 입력 크기 제한으로 인해 리사이징
+            # aspect_ratio = image.width / image.height
+            # if aspect_ratio > 1:
+            #     new_width = 512
+            #     new_height = int(512 / aspect_ratio)
+            # else:
+            #     new_height = 512
+            #     new_width = int(512 * aspect_ratio)
+            # image = image.resize((new_width, new_height), Image.LANCZOS)
+
+            # 이미지 해상도가 정상이라면 기존 크기 유지
+            return image
+        
+        # 생성형 AI로 업스케일링
+        prompt = "high resolution, detailed image"
+        
+        with torch.no_grad():
+            upscaled = enhance_image_quality.model(
+                prompt=prompt,
+                image=image,
+                noise_level=5,
+                num_inference_steps=20,
+            ).images[0]
+        
+        return upscaled
+        
+    except Exception as e:
+        print(f"생성형 AI 초해상화 중 오류 발생: {e}")
+        # 오류 발생 시 기본 방식으로 대체
+        return image.resize((int(image.width * outscale), int(image.height * outscale)), Image.LANCZOS)
+    
+# def generate_food_name(image_path):
+#     """이미지를 분석하여 반찬 이름을 자동으로 생성"""
+#     # GPT-4 Vision이나 멀티모달 모델을 활용
+#     from openai import OpenAI
+#     import base64
+# 
+#     client = OpenAI(api_key="your_api_key_here")
+#     with open(image_path, "rb") as image_file:
+#         response = client.chat.completions.create(
+#             model="gpt-4.1",
+#             messages=[
+#                 {"role": "system", "content": "당신은 식재료 전문가 입니다."},
+#                 {"role": "system", "content": "제공된 이미지는 조리된 음식과 조리되지 않은 식재료가 포함되어 있습니다.."},
+#                 {"role": "system", "content": "답변은 '김치', '버섯', '토마토'와 같이 한국어로 정확한 식재료,반찬 이름만 간결하게 작성하세요."},
+#                 {"role": "system", "content": "확실하지 않은 경우에는 가장 유사한 하나의 식재료 이름을 제시하되, 가능한 정확하게 답변하세요."},
+#                 {"role": "system", "content": "답변 뒤에는 정확도를 퍼센트로 작성하세요 (예: '김치 95%')."},
+#                 {"role": "user", "content": [{"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64.b64encode(image_file.read()).decode('utf-8')}"}}]}
+#             ],
+#             max_tokens=50,
+#             temperature=0.2
+#         )
+#     return response.choices[0].message.content
