@@ -12,6 +12,12 @@ call .venv\Scripts\activate.bat
 echo Virtual environment activated
 echo =========================================================
 
+:: 모델 다운로드
+echo Downloading models... This may take a few minutes.
+echo =========================================================
+python download_model.py
+echo =========================================================
+
 :: 서버 실행
 echo Initializing API server... This may take a few seconds.
 echo =========================================================

@@ -59,7 +59,6 @@ def enhance_image_quality(image, outscale=4):
                 enhance_image_quality.model = StableDiffusionUpscalePipeline.from_pretrained(
                     "stabilityai/stable-diffusion-x4-upscaler", 
                     torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
-                    use_auth_token=False,  # 인증 토큰 필요 없음
                     revision="fp16" if torch.cuda.is_available() else "main"
                 )
                 # VAE scaling_factor 수정
