@@ -187,7 +187,7 @@ def generate_food_name(image):
     import os
 
     # API 키 설정
-    client = OpenAI(api_key="yout_openai_api_key_here")  # OpenAI API 키를 여기에 입력하세요
+    client = OpenAI(api_key="your_openai_api_key_here")  # OpenAI API 키를 여기에 입력하세요
     
     # 이미지 타입 확인 및 처리
     if isinstance(image, str) and os.path.isfile(image):
