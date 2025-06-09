@@ -53,7 +53,9 @@ def compute_similarity(features1: np.ndarray, features2: np.ndarray) -> float:
     Returns:
         코사인 유사도 점수 (0~1 사이의 값, 1에 가까울수록 유사)
     """
-    return float(np.dot(features1, features2))
+    result = float(np.dot(features1, features2))
+    print(f"similarity: {result}")
+    return result
 
 # 현재 미사용
 def compare_images(image1: Union[str, Image.Image], 
@@ -148,11 +150,15 @@ def compare_data_lists_clip(storage_list: List[Dict],
         for storage_key, storage_feature in storage_features.items():
             if storage_key in matched_storage_keys: continue
 
+            # print(f"Comparing new data {new_key} with storage {storage_key}")  # 디버깅용
             similarity = compute_similarity(new_feature, storage_feature)
 
             if similarity > max_similarity:
                 max_similarity = similarity
                 best_match_storage_key = storage_key
+                # print(f"New data {new_key} matched with storage {storage_key} (Sim: {similarity:.4f})")  # 디버깅용
+
+            # print("############################################")  # 디버깅용
 
         if max_similarity >= threshold and best_match_storage_key:
             matched_storage_keys.add(best_match_storage_key)
