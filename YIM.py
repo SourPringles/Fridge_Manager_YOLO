@@ -6,6 +6,7 @@ from flask import Flask, render_template
 # Custom Modules
 from views import register_blueprints_main
 from utils import register_blueprints_sub, init_scheduler, init_folders
+from modules import preload_models
 from db import init_db
 
 
@@ -24,6 +25,9 @@ init_db()
 
 # Initialize folders
 init_folders()
+
+# Preload models
+preload_models()
 
 # Register blueprints
 register_blueprints_main(YIM)

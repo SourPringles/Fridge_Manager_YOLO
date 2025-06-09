@@ -171,7 +171,15 @@ def enhance_image_quality_consistent(image, outscale=4, seed=42):
     except Exception as e:
         print(f"생성형 AI 초해상화 중 오류 발생: {e}")
         return image.resize((int(image.width * outscale), int(image.height * outscale)), Image.LANCZOS)
-    
+
+# 모델 로딩딩
+def preload_models():
+    print("초해상화 모델을 미리 로드 중...")
+    dummy_image = Image.new('RGB', (128, 128), color='white')
+    _ = enhance_image_quality_consistent(dummy_image)
+    print("모델 미리 로드 완료")
+
+
 def generate_food_name(image):
     """이미지를 분석하여 반찬 이름을 자동으로 생성
     
