@@ -145,32 +145,3 @@ def resize_and_compress_image(image, file_path, max_size_kb=50):
     
     print(f"모든 시도 후에도 목표 크기({max_size_kb}KB)를 달성하지 못했습니다.")
     return False
-
-    """일관된 초해상화 결과를 생성하는 함수
-    
-    Args:
-        thumbnail: 입력 이미지
-        target_size: CLIP 모델에 최적화된 크기 (기본 224x224)
-    
-    Returns:
-        일관된 크기와 품질로 향상된 이미지
-    """
-    # 1. 먼저 이미지를 일관된 크기로 리사이징
-    if isinstance(thumbnail, PIL.Image.Image):
-        resized_img = thumbnail.resize(target_size, PIL.Image.LANCZOS)
-        # PIL 이미지를 numpy 배열로 변환
-        img_array = np.array(resized_img)
-    else:
-        # OpenCV 이미지라면 직접 리사이징
-        img_array = cv2.resize(thumbnail, target_size, interpolation=cv2.INTER_LANCZOS4)
-        
-    # 2. 초해상화 적용 (특정 알고리즘으로 고정)
-    # 예: 간단한 샤프닝 필터 적용 (일관된 결과를 위해)
-    kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
-    enhanced = cv2.filter2D(img_array, -1, kernel)
-    
-    # 3. 색상 정규화 (CLIP 모델 입력에 맞춤)
-    enhanced = cv2.normalize(enhanced, None, 0, 255, cv2.NORM_MINMAX)
-    
-    # PIL 이미지로 변환하여 반환
-    return PIL.Image.fromarray(enhanced)
