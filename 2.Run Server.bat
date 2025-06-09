@@ -1,6 +1,6 @@
 @echo off
 echo =========================================================
-echo            Starting AI Item Manager API Server
+echo            Starting YOLO Item Manager API Server
 echo =========================================================
 
 :: 가상환경 활성화
@@ -12,14 +12,8 @@ call .venv\Scripts\activate.bat
 echo Virtual environment activated
 echo =========================================================
 
-:: 모델 다운로드
-echo Downloading models... This may take a few minutes.
-echo =========================================================
-python download_model.py
-echo =========================================================
-
 :: 서버 실행
-echo Initializing API server... This may take a few seconds.
+echo Initializing API server... This may take a few seconds...
 echo =========================================================
 python YIM.py
 
